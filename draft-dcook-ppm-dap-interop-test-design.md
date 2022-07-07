@@ -8,19 +8,19 @@ number:
 date:
 consensus: true
 v: 3
-area: AREA
-workgroup: WG Working Group
+area: "Security"
+workgroup: "Privacy Preserving Measurement"
 keyword:
  - next generation
  - unicorn
  - sparkling distributed ledger
 venue:
-  group: WG
-  type: Working Group
-  mail: WG@example.com
-  arch: https://example.com/WG
-  github: USER/REPO
-  latest: https://example.com/LATEST
+  group: "Privacy Preserving Measurement"
+  type: "Working Group"
+  mail: "ppm@ietf.org"
+  arch: "https://mailarchive.ietf.org/arch/browse/ppm/"
+  github: "divergentdave/draft-dcook-ppm-dap-interop-test-design"
+  latest: "https://divergentdave.github.io/draft-dcook-ppm-dap-interop-test-design/draft-dcook-ppm-dap-interop-test-design.html"
 
 author:
  -
