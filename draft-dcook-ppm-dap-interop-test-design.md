@@ -2,7 +2,7 @@
 title: "DAP Interoperation Test Design"
 category: info
 
-docname: draft-todo-yourname-protocol-latest
+docname: draft-dcook-ppm-dap-interop-test-design-latest
 submissiontype: IETF  # also: "independent", "IAB", or "IRTF"
 number:
 date:
@@ -26,7 +26,7 @@ author:
  -
     fullname: Your Name Here
     organization: Your Organization Here
-    email: your.email@example.com
+    email: "dcook@letsencrypt.org"
 
 normative:
 
