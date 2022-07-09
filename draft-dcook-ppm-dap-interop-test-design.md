@@ -3,17 +3,13 @@ title: "DAP Interoperation Test Design"
 category: info
 
 docname: draft-dcook-ppm-dap-interop-test-design-latest
-submissiontype: IETF  # also: "independent", "IAB", or "IRTF"
+submissiontype: IETF
 number:
 date:
-consensus: true
+consensus: false
 v: 3
 area: "Security"
 workgroup: "Privacy Preserving Measurement"
-keyword:
- - next generation
- - unicorn
- - sparkling distributed ledger
 venue:
   group: "Privacy Preserving Measurement"
   type: "Working Group"
@@ -24,8 +20,8 @@ venue:
 
 author:
  -
-    fullname: Your Name Here
-    organization: Your Organization Here
+    fullname: David Cook
+    organization: ISRG
     email: "dcook@letsencrypt.org"
 
 normative:
@@ -35,7 +31,7 @@ informative:
 
 --- abstract
 
-TODO Abstract
+This document defines a common test interface for implementations of the Distributed Aggregation Protocol for Privacy Preserving Measurement (DAP-PPM) and describes how this test interface can be used to perform interoperation testing between the implementations. Tests are orchestrated with containers, and new test-only APIs are introduced to provision DAP-PPM tasks and initiate processing.
 
 
 --- middle
@@ -52,7 +48,7 @@ TODO Introduction
 
 # Security Considerations
 
-TODO Security
+Any DAP-PPM implementation that adopts this testing interface should ensure that the test-only APIs described herein are only present in software used for testing purposes, and not in production systems.
 
 
 # IANA Considerations
@@ -65,4 +61,4 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-TODO acknowledge.
+Thanks to Brandon Pitman and Christopher Patton for feedback and contributions.
