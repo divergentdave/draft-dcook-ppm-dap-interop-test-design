@@ -4,8 +4,8 @@
 
 Privacy Preserving Measurement                                   D. Cook
 Internet-Draft                                                      ISRG
-Intended status: Informational                               9 July 2022
-Expires: 10 January 2023
+Intended status: Informational                              13 July 2022
+Expires: 14 January 2023
 
 
                      DAP Interoperation Test Design
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 January 2023.
+   This Internet-Draft will expire on 14 January 2023.
 
 Copyright Notice
 
@@ -76,7 +76,9 @@ Table of Contents
    2.  Conventions and Definitions
    3.  Security Considerations
    4.  IANA Considerations
-   5.  Normative References
+   5.  References
+     5.1.  Normative References
+     5.2.  Informative References
    Acknowledgments
    Author's Address
 
@@ -102,7 +104,15 @@ Table of Contents
 
    This document has no IANA actions.
 
-5.  Normative References
+5.  References
+
+5.1.  Normative References
+
+   [DAP-PPM]  Geoghegan, T., Patton, C., Rescorla, E., and C. A. Wood,
+              "Distributed Aggregation Protocol for Privacy Preserving
+              Measurement", 11 July 2022,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-
+              01>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -112,6 +122,13 @@ Table of Contents
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+5.2.  Informative References
+
+   [SI2020]   Seemann, M. and J. Iyengar, "Automating QUIC
+              Interoperability Testing", 10 August 2020,
+              <https://research.protocol.ai/publications/automating-
+              quic-interoperability-testing/seemann2020.pdf>.
 
 Acknowledgments
 
