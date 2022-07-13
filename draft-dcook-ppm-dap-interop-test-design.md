@@ -25,8 +25,24 @@ author:
     email: "dcook@letsencrypt.org"
 
 normative:
+  DAP-PPM:
+    title: "Distributed Aggregation Protocol for Privacy Preserving Measurement"
+    date: 2022-07-11
+    target: "https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-01"
+    author:
+      - ins: T. Geoghegan
+      - ins: C. Patton
+      - ins: E. Rescorla
+      - ins: C. A. Wood
 
 informative:
+  SI2020:
+    title: "Automating QUIC Interoperability Testing"
+    date: 2020-08-10
+    target: "https://research.protocol.ai/publications/automating-quic-interoperability-testing/seemann2020.pdf"
+    author:
+      - ins: M. Seemann
+      - ins: J. Iyengar
 
 
 --- abstract
