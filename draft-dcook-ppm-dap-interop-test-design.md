@@ -4,6 +4,7 @@ category: info
 
 docname: draft-dcook-ppm-dap-interop-test-design-latest
 submissiontype: IETF
+ipr: trust200902
 number:
 date:
 consensus: false
