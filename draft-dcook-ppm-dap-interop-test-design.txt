@@ -4,8 +4,8 @@
 
 Privacy Preserving Measurement                                   D. Cook
 Internet-Draft                                                      ISRG
-Intended status: Informational                              27 July 2022
-Expires: 28 January 2023
+Intended status: Informational                              28 July 2022
+Expires: 29 January 2023
 
 
                      DAP Interoperation Test Design
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 January 2023.
+   This Internet-Draft will expire on 29 January 2023.
 
 Copyright Notice
 
@@ -622,18 +622,17 @@ Table of Contents
 5.  Implementation Status
 
    This document has not yet been implemented at time of writing.  There
-   are two open source DAP-PPM implementations, Janus
-   (https://github.com/divviup/janus) from Divvi Up and Daphne
-   (https://github.com/cloudflare/daphne) from Cloudflare Research,
-   which could be extended with this testing interface.
+   are two open source DAP-PPM implementations, [Janus] from Divvi Up
+   and [Daphne] from Cloudflare Research, which could be extended with
+   this testing interface.
 
-   The TypeScript divviup-ts (https://github.com/divviup/divviup-ts)
-   library could readily be turned into a client-only test participant.
+   The TypeScript [divviup-ts] library could readily be turned into a
+   client-only test participant.
 
    Both divviup-ts and the VDAF proof of concept implementation
-   (https://github.com/cfrg/draft-irtf-cfrg-vdaf/tree/main/poc) could be
-   used as the VDAF core of a non-production DAP-PPM implementation, to
-   provide diversity of VDAF implementations in interoperation tests.
+   [VDAF-POC] could be used as the VDAF core of a non-production DAP-PPM
+   implementation, to provide diversity of VDAF implementations in
+   interoperation tests.
 
    Additional DAP-PPM implementations would be warmly welcomed.
 
@@ -676,10 +675,25 @@ Table of Contents
 
 8.2.  Informative References
 
+   [Daphne]   "Implementation of DAP", 27 July 2022,
+              <https://github.com/cloudflare/daphne>.
+
+   [divviup-ts]
+              "TypeScript client for https://divviup.org", 27 July 2022,
+              <https://github.com/divviup/divviup-ts>.
+
+   [Janus]    "Experimental implementation of the DAP-PPM
+              specification", 26 July 2022,
+              <https://github.com/divviup/janus>.
+
    [SI2020]   Seemann, M. and J. Iyengar, "Automating QUIC
               Interoperability Testing", 10 August 2020,
               <https://research.protocol.ai/publications/automating-
               quic-interoperability-testing/seemann2020.pdf>.
+
+   [VDAF-POC] "VDAF reference implementations", 11 July 2022,
+              <https://github.com/cfrg/draft-irtf-cfrg-vdaf/tree/main/
+              poc>.
 
 Acknowledgments
 
