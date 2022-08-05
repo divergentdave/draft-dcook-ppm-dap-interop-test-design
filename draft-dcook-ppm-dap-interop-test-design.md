@@ -94,7 +94,7 @@ No environment variables or volume mounts will be provided to the containers.
 
 # Interoperation Test API {#test-api}
 
-Each container will have an HTTP server listening on port 8080 for commands from the test runner. Requests and responses for each endpoint listed below SHALL be encoded JSON objects {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task IDs, HPKE configurations, and verification keys) SHALL be encoded as strings with base64url {{!RFC4648}}, inside the JSON objects.
+Each container will have an HTTP server listening on port 8080 for commands from the test runner. All requests MUST use the HTTP method POST. Requests and responses for each endpoint listed below SHALL be encoded JSON objects {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task IDs, HPKE configurations, and verification keys) SHALL be encoded as strings with base64url {{!RFC4648}}, inside the JSON objects.
 
 Each of these test APIs should return a status code of 200 OK if the command was received, recognized, and parsed successfully, regardless of whether any underlying DAP-PPM request succeeded or failed. The DAP-level success or failure will be included in the test API response body. If a request is made to an endpoint starting with “/internal/test/”, but not listed here, a status code of 404 Not Found SHOULD be returned, to simplify the introduction of new test APIs.
 
