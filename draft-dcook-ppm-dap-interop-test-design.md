@@ -190,6 +190,7 @@ Register a task with the collector, with the given configuration. Returns the co
 |`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
 |`leader`|The leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {vdaf-object}. This determines the task's VDAF.|
+|`collectorAuthenticationToken`|The authentication bearer token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
