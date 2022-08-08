@@ -123,6 +123,7 @@ Upon receipt of this command, the client container will construct a DAP-PPM repo
 |`vdaf`|An object, with the layout given in {vdaf-object}. This determines the VDAF to be used when constructing a report.|
 |`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: 0 or 1. If the VDAF's `type` is `"Prio3Aes128Sum"`: a number (should be an integer). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a number (should be an integer).|
 |`nonceTime` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
+|`minBatchDuration`|A number, providing the minimum number of seconds that can be in a batch’s interval. The batch interval will always be a multiple of this value.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
