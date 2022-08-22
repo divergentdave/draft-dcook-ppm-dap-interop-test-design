@@ -112,6 +112,11 @@ In multiple APIs defined below, the test runner will send the name of a VDAF, al
 
 ## Client
 
+### `/internal/test/ready` {#client-ready}
+
+The test runner will POST an empty object (i.e. `{}`) to this endpoint to check if the client container is ready to serve requests. If it is ready, it MUST return a status code of 200 OK.
+
+
 ### `/internal/test/upload` {#upload}
 
 Upon receipt of this command, the client container will construct a DAP-PPM report with the given configuration and measurement, and submit it. The client container will send its response to the test runner once report submission has either succeeded or permanently failed.
@@ -133,6 +138,11 @@ Upon receipt of this command, the client container will construct a DAP-PPM repo
 
 
 ## Aggregator (Leader or Helper)
+
+### `/internal/test/ready` {#aggregator-ready}
+
+The test runner will POST an empty object (i.e. `{}`) to this endpoint to check if the aggregator container is ready to serve requests. If it is ready, it MUST return a status code of 200 OK.
+
 
 ### `/internal/test/endpoint_for_task` {#endpoint-for-task}
 
@@ -181,6 +191,11 @@ The HPKE keypair generated for this task should use the mandatory-to-implement a
 
 
 ## Collector
+
+### `/internal/test/ready` {#collector-ready}
+
+The test runner will POST an empty object (i.e. `{}`) to this endpoint to check if the collector container is ready to serve requests. If it is ready, it MUST return a status code of 200 OK.
+
 
 ### `/internal/test/add_task` {#collector-add-task}
 
@@ -268,7 +283,7 @@ The following sequence outlines how the test runner will use the above APIs on p
 
 1. Create and start containers.
 1. Set up networking between containers.
-1. Try opening a TCP connection to each container's port, and retry until it succeeds.
+1. Try sending `/internal/test/ready` requests to each container, and retry until they succeed.
 1. Generate a random `TaskId`, random authentication tokens, and a VDAF verification key.
 1. Send a `/internal/test/endpoint_for_task` request ({{endpoint-for-task}}) to the leader.
 1. Send a `/internal/test/endpoint_for_task` request to the helper.
