@@ -309,4 +309,4 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-Thanks to Brandon Pitman and Christopher Patton for feedback and contributions.
+Thanks to Brandon Pitman, Christopher Patton, and Tim Geoghegan for feedback and contributions.
