@@ -46,20 +46,8 @@ informative:
       - ins: J. Iyengar
   Janus:
     title: Experimental implementation of the DAP-PPM specification
-    date: 2022-07-26
+    date: 2022-08-25
     target: https://github.com/divviup/janus
-  Daphne:
-    title: Implementation of DAP
-    date: 2022-07-27
-    target: https://github.com/cloudflare/daphne
-  divviup-ts:
-    title: TypeScript client for https://divviup.org
-    date: 2022-07-27
-    target: https://github.com/divviup/divviup-ts
-  VDAF-POC:
-    title: VDAF reference implementations
-    date: 2022-07-11
-    target: https://github.com/cfrg/draft-irtf-cfrg-vdaf/tree/main/poc
 
 
 --- abstract
@@ -301,11 +289,7 @@ The following sequence outlines how the test runner will use the above APIs on p
 
 # Implementation Status
 
-This document has not yet been implemented at time of writing. There are two open source DAP-PPM implementations, [Janus] from Divvi Up and [Daphne] from Cloudflare Research, which could be extended with this testing interface.
-
-The TypeScript [divviup-ts] library could readily be turned into a client-only test participant.
-
-Both divviup-ts and the VDAF proof of concept implementation [VDAF-POC] could be used as the VDAF core of a non-production DAP-PPM implementation, to provide diversity of VDAF implementations in interoperation tests.
+[Janus] currently implements a version of this test interface.
 
 Additional DAP-PPM implementations would be warmly welcomed.
 
