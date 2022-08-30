@@ -73,7 +73,7 @@ Taking inspiration from QuicInteropRunner [SI2020], each participating implement
 
 Each participating DAP implementation may provide one or more container images, one for each protocol role it implements. (client, leader, helper, and collector) A list of available container images will be maintained for each role. Implementations may want to submit a single aggregator image in both the leader list and helper list. The test runner will fetch each container using the given repository, image name, and tag.
 
-When the container’s entry point executable is run, it SHALL start up an HTTP server listening on port 8080. In all cases, the container will serve the endpoints described in {{test-api}} (particularly, the subsection appropriate to its protocol role). In the case of a helper or leader container, it SHALL also serve the endpoints specified by [DAP-PPM] on the same port, at some relative path. The container should run indefinitely, and the test runner will terminate the container on completion of the test case. (While DAP-PPM requires HTTPS connections, only using HTTP between containers simplifies test setup. Putting TLS client/server interop out-of-scope for these tests is acceptable, as it’s not of interest.)
+When the container’s entry point executable is run, it SHALL start up an HTTP server listening on port 8080. In all cases, the container will serve the endpoints described in {{test-api}} (particularly, the subsection appropriate to its protocol role). In the case of a helper or leader container, it SHALL also serve the endpoints specified by [DAP-PPM] at some relative path & port (which MAY be the same port 8080 as used to serve the {{test-api}}). The container should run indefinitely, and the test runner will terminate the container on completion of the test case. (While DAP-PPM requires HTTPS connections, only using HTTP between containers simplifies test setup. Putting TLS client/server interop out-of-scope for these tests is acceptable, as it’s not of interest.)
 
 Log output SHOULD be captured into the directory “/logs” inside the container. This will be copied out to the host for inspection on completion of the test case.
 
@@ -136,12 +136,12 @@ The test runner will POST an empty object (i.e. `{}`) to this endpoint to check 
 
 Request the base URL for DAP-PPM endpoints for a new task. This API will be invoked immediately before `/internal/test/add_task` (see {{aggregator-add-task}}), to determine the endpoint URLs of the aggregators. If the aggregator uses a common set of DAP-PPM endpoints for all tasks, it could always return the same value, such as the relative URL `/`. Alternately, implementations may wish to generate new endpoints for each task, derive the endpoint based on the `TaskId`, etc.
 
-The test runner will provide the hostname and port at which the aggregator is externally reachable. If the aggregator returns a relative URL, the test runner will combine it with the hostname and port into an absolute URL. Otherwise, the aggregator can incorporate the hostname and port into an absolute URL and return that.
+The test runner will provide the hostname at which the aggregator is externally reachable. If the aggregator returns a relative URL, the test runner will combine it with the hostname into an absolute URL, assuming that the port is 8080. Otherwise, the aggregator can incorporate the hostname into an absolute URL and return that.
 
 |Key|Value|
 |`taskId`|A base64url-encoded DAP-PPM `TaskId`|
 |`aggregatorId`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
-|`hostnameAndPort`|This aggregator's hostname and port in the interoperation test environment. This may optionally be used in constructing the endpoint URL as an absolute URL.|
+|`hostname`|This aggregator's hostname in the interoperation test environment. This may optionally be used in constructing the endpoint URL as an absolute URL.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
