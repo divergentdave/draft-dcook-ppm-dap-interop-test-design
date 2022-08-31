@@ -258,7 +258,7 @@ Test cases could be written to cover the following scenarios.
 
 All test cases should automatically fail after a generous timeout.
 
-It is the responsibility of the test runner to wait for all containers to start up and listen on their ports before sending any commands.
+It is the responsibility of the test runner to wait for all containers to start up and respond successfully to a request to `/internal/test/ready` before sending any further commands.
 
 Aggregator URLs will be constructed by the test runner with hostnames that resolve to the respective containers within the container network.
 
