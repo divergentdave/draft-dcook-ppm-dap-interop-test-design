@@ -113,7 +113,7 @@ Upon receipt of this command, the client container will construct a DAP-PPM repo
 |`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
 |`leader`|The leader's endpoint URL.|
 |`helper`|The helper's endpoint URL.|
-|`vdaf`|An object, with the layout given in {vdaf-object}. This determines the VDAF to be used when constructing a report.|
+|`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
 |`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: 0 or 1. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10).|
 |`nonceTime` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
 |`minBatchDuration`|A number, providing the minimum number of seconds that can be in a batch’s interval. The batch interval will always be a multiple of this value.|
@@ -161,7 +161,7 @@ The HPKE keypair generated for this task should use the mandatory-to-implement a
 |`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
 |`leader`|The leader's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`helper`|The helper's endpoint URL. The test runner will ensure this is an absolute URL.|
-|`vdaf`|An object, with the layout given in {vdaf-object}. This determines the task's VDAF.|
+|`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
 |`leaderAuthenticationToken`|The authentication bearer token that is shared with the other aggregator, as a string. This string must be safe for use as an HTTP header value.|
 |`collectorAuthenticationToken` (only present if `aggregatorId` is 0)|The authentication bearer token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value.|
 |`aggregatorId`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
@@ -192,7 +192,7 @@ Register a task with the collector, with the given configuration. Returns the co
 |Key|Value|
 |`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
 |`leader`|The leader's endpoint URL.|
-|`vdaf`|An object, with the layout given in {vdaf-object}. This determines the task's VDAF.|
+|`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
 |`collectorAuthenticationToken`|The authentication bearer token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value.|
 {: title="Request JSON object structure"}
 
