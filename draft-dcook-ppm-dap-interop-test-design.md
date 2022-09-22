@@ -82,7 +82,7 @@ No environment variables or volume mounts will be provided to the containers.
 
 # Interoperation Test API {#test-api}
 
-Each container will have an HTTP server listening on port 8080 for commands from the test runner. All requests MUST use the HTTP method POST. Requests and responses for each endpoint listed below SHALL be encoded JSON objects {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task IDs, HPKE configurations, and verification keys) SHALL be encoded as strings with base64url {{!RFC4648}}, inside the JSON objects. Certain integer values will be encoded as strings in base 10 instead of as numbers, where noted, if JSON numbers cannot fully represent the range of valid values.
+Each container will have an HTTP server listening on port 8080 for commands from the test runner. All requests MUST use the HTTP method POST. Requests and responses for each endpoint listed below SHALL be encoded JSON objects {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task IDs, HPKE configurations, and verification keys) SHALL be encoded as strings with base64url {{!RFC4648}}, inside the JSON objects. Any integer values in a VDAF's parameters, measurement, or aggregate result will be encoded as strings in base 10 instead of as numbers. This avoids incompatibilities due to limitations on the range of JSON numbers that different implementations can process.
 
 Each of these test APIs should return a status code of 200 OK if the command was received, recognized, and parsed successfully, regardless of whether any underlying DAP-PPM request succeeded or failed. The DAP-level success or failure will be included in the test API response body. If a request is made to an endpoint starting with “/internal/test/”, but not listed here, a status code of 404 Not Found SHOULD be returned, to simplify the introduction of new test APIs.
 
@@ -93,7 +93,7 @@ In multiple APIs defined below, the test runner will send the name of a VDAF, al
 
 |Key|Value|
 |`type`|One of `"Prio3Aes128Count"`, `"Prio3Aes128Sum"`, or `"Prio3Aes128Histogram"`|
-|`bits` (only present if `type` is `"Prio3Aes128Sum"`)|The bit width of the integers being summed, (as a number) used to parameterize the Prio3Aes128Sum VDAF.|
+|`bits` (only present if `type` is `"Prio3Aes128Sum"`)|The bit width of the integers being summed, (encoded in base 10 as a string) used to parameterize the Prio3Aes128Sum VDAF.|
 |`buckets` (only present if `type` is `"Prio3Aes128Histogram"`)|An array of histogram bucket boundaries, (encoded in base 10 as strings) used to parameterize the Prio3Aes128Histogram VDAF.|
 {: title="VDAF JSON object structure" #vdaf-object}
 
@@ -114,7 +114,7 @@ Upon receipt of this command, the client container will construct a DAP-PPM repo
 |`leader`|The leader's endpoint URL.|
 |`helper`|The helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
-|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: 0 or 1. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10).|
+|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10).|
 |`nonceTime` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
 |`minBatchDuration`|A number, providing the minimum number of seconds that can be in a batch’s interval. The batch interval will always be a multiple of this value.|
 {: title="Request JSON object structure"}
@@ -232,7 +232,7 @@ Upon receiving this command, the collector will poll the leader’s collect URL 
 |Key|Value|
 |`status`|Either `"complete"` if the result was returned, `"in progress"` if the result was not yet ready, or `"error"` if an error occurred.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count, this will be a number. If the VDAF is of type Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128Histogram, this will be an array of numbers.|
+|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128Histogram, this will be an array of strings, each representing an integer in base 10.|
 {: title="Response JSON object structure"}
 
 
