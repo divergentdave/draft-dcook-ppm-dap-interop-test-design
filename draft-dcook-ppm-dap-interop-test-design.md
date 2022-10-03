@@ -232,7 +232,7 @@ Upon receiving this command, the collector will poll the leader’s collect URL 
 |Key|Value|
 |`status`|Either `"complete"` if the result was returned, `"in progress"` if the result was not yet ready, or `"error"` if an error occurred.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`report_count` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
+|`reportCount` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
 |`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128Histogram, this will be an array of strings, each representing an integer in base 10.|
 {: title="Response JSON object structure"}
 
