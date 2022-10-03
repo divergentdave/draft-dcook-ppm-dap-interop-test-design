@@ -92,7 +92,8 @@ Each of these test APIs should return a status code of 200 OK if the command was
 In multiple APIs defined below, the test runner will send the name of a VDAF, along with the parameters necessary to fully specify the VDAF. These will be stored in a nested object, with the following attributes (new `type` values and new keys will be added as new VDAFs are defined).
 
 |Key|Value|
-|`type`|One of `"Prio3Aes128Count"`, `"Prio3Aes128Sum"`, or `"Prio3Aes128Histogram"`|
+|`type`|One of `"Prio3Aes128Count"`, `"Prio3Aes128CountVec"`, `"Prio3Aes128Sum"`, or `"Prio3Aes128Histogram"`|
+|`length` (only present if `type` is `"Prio3Aes128CountVec"`)|The length of the vectors being summed, (encoded in base 10 as a string) used to parameterize the Prio3Aes128CountVec VDAF.|
 |`bits` (only present if `type` is `"Prio3Aes128Sum"`)|The bit width of the integers being summed, (encoded in base 10 as a string) used to parameterize the Prio3Aes128Sum VDAF.|
 |`buckets` (only present if `type` is `"Prio3Aes128Histogram"`)|An array of histogram bucket boundaries, (encoded in base 10 as strings) used to parameterize the Prio3Aes128Histogram VDAF.|
 {: title="VDAF JSON object structure" #vdaf-object}
@@ -114,7 +115,7 @@ Upon receipt of this command, the client container will construct a DAP-PPM repo
 |`leader`|The leader's endpoint URL.|
 |`helper`|The helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
-|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10).|
+|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10).|
 |`nonceTime` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
 |`minBatchDuration`|A number, providing the minimum number of seconds that can be in a batch’s interval. The batch interval will always be a multiple of this value.|
 {: title="Request JSON object structure"}
@@ -233,7 +234,7 @@ Upon receiving this command, the collector will poll the leader’s collect URL 
 |`status`|Either `"complete"` if the result was returned, `"in progress"` if the result was not yet ready, or `"error"` if an error occurred.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
 |`reportCount` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
-|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128Histogram, this will be an array of strings, each representing an integer in base 10.|
+|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128CountVec or Prio3Aes128Histogram, this will be an array of strings, each representing an integer in base 10.|
 {: title="Response JSON object structure"}
 
 
