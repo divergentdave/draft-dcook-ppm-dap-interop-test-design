@@ -163,8 +163,8 @@ The HPKE keypair generated for this task should use the mandatory-to-implement a
 |`leader`|The leader's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`helper`|The helper's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`leaderAuthenticationToken`|The authentication bearer token that is shared with the other aggregator, as a string. This string must be safe for use as an HTTP header value.|
-|`collectorAuthenticationToken` (only present if `aggregatorId` is 0)|The authentication bearer token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value.|
+|`leaderAuthenticationToken`|The authentication token that is shared with the other aggregator, as a string. This string must be safe for use as an HTTP header value. When the leader sends HTTP requests to the helper, it should include this value in a header named `DAP-Auth-Token`.|
+|`collectorAuthenticationToken` (only present if `aggregatorId` is 0)|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
 |`aggregatorId`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
 |`verifyKey`|The verification key shared by the two aggregators, encoded with base64url.|
 |`maxBatchLifetime`|A number, providing the maximum number of times any report can be included in a collect request.|
@@ -194,7 +194,7 @@ Register a task with the collector, with the given configuration. Returns the co
 |`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
 |`leader`|The leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`collectorAuthenticationToken`|The authentication bearer token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value.|
+|`collectorAuthenticationToken`|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
