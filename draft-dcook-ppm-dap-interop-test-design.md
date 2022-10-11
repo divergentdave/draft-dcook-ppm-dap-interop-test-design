@@ -167,7 +167,7 @@ The HPKE keypair generated for this task should use the mandatory-to-implement a
 |`collectorAuthenticationToken` (only present if `aggregatorId` is 0)|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
 |`aggregatorId`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
 |`verifyKey`|The verification key shared by the two aggregators, encoded with base64url.|
-|`maxBatchLifetime`|A number, providing the maximum number of times any report can be included in a collect request.|
+|`maxBatchQueryCount`|A number, providing the maximum number of times any report can be included in a collect request.|
 |`minBatchSize`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
 |`timePrecision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
 |`collectorHpkeConfig`|The collector’s HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
