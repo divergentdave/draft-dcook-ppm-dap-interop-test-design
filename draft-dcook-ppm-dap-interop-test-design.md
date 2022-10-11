@@ -28,8 +28,8 @@ author:
 normative:
   DAP-PPM:
     title: "Distributed Aggregation Protocol for Privacy Preserving Measurement"
-    date: 2022-07-11
-    target: "https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-01"
+    date: 2022-09-22
+    target: "https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-02"
     author:
       - ins: T. Geoghegan
       - ins: C. Patton
@@ -82,12 +82,14 @@ No environment variables or volume mounts will be provided to the containers.
 
 # Interoperation Test API {#test-api}
 
-Each container will have an HTTP server listening on port 8080 for commands from the test runner. All requests MUST use the HTTP method POST. Requests and responses for each endpoint listed below SHALL be encoded JSON objects {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task IDs, HPKE configurations, and verification keys) SHALL be encoded as strings with base64url {{!RFC4648}}, inside the JSON objects. Any integer values in a VDAF's parameters, measurement, or aggregate result will be encoded as strings in base 10 instead of as numbers. This avoids incompatibilities due to limitations on the range of JSON numbers that different implementations can process.
+Each container will have an HTTP server listening on port 8080 for commands from the test runner. All requests MUST use the HTTP method POST. Requests and responses for each endpoint listed below SHALL be encoded JSON objects {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task IDs, batch IDs, HPKE configurations, and verification keys) SHALL be encoded as strings with base64url {{!RFC4648}}, inside the JSON objects. Any integer values in a VDAF's parameters, measurement, or aggregate result will be encoded as strings in base 10 instead of as numbers. This avoids incompatibilities due to limitations on the range of JSON numbers that different implementations can process.
 
 Each of these test APIs should return a status code of 200 OK if the command was received, recognized, and parsed successfully, regardless of whether any underlying DAP-PPM request succeeded or failed. The DAP-level success or failure will be included in the test API response body. If a request is made to an endpoint starting with “/internal/test/”, but not listed here, a status code of 404 Not Found SHOULD be returned, to simplify the introduction of new test APIs.
 
 
 ## Common Structures
+
+### VDAF
 
 In multiple APIs defined below, the test runner will send the name of a VDAF, along with the parameters necessary to fully specify the VDAF. These will be stored in a nested object, with the following attributes (new `type` values and new keys will be added as new VDAFs are defined).
 
@@ -97,6 +99,22 @@ In multiple APIs defined below, the test runner will send the name of a VDAF, al
 |`bits` (only present if `type` is `"Prio3Aes128Sum"`)|The bit width of the integers being summed, (encoded in base 10 as a string) used to parameterize the Prio3Aes128Sum VDAF.|
 |`buckets` (only present if `type` is `"Prio3Aes128Histogram"`)|An array of histogram bucket boundaries, (encoded in base 10 as strings) used to parameterize the Prio3Aes128Histogram VDAF.|
 {: title="VDAF JSON object structure" #vdaf-object}
+
+
+### Query {#query}
+
+In multiple APIs defined below, the test runner will need to send a query type, and in one API, it will need to send a query type along with the associated query parameters.
+
+Query types are represented in API requests as numbers, following the values of the `QueryType` enum in [DAP-PPM].
+
+Queries are represented in API requests as a nested object, with the following attributes (new keys will be added as new query types are defined).
+
+|Key|Value|
+|`type`|A number, representing a query type, as described above.|
+|`batchIntervalStart` (only present if `type` is 1, for time interval queries)|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
+|`batchIntervalDuration` (only present if `type` is 1, for time interval queries)|The duration of the batch interval in seconds, as a number.|
+|`batchId` (only present if `type` is 2, for fixed size queries)|A base64url-encoded DAP-PPM `BatchID`.|
+{: title="Query JSON object structure" #query-object}
 
 
 ## Client
@@ -171,11 +189,29 @@ The HPKE keypair generated for this task should use the mandatory-to-implement a
 |`minBatchSize`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
 |`timePrecision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
 |`collectorHpkeConfig`|The collector’s HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
+|`queryType`|A number, representing the task's query type, as described in {{query}}.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
 |`status`|`"success"` if the task was successfully set up, or `"error"` otherwise. (for example, if the VDAF was not supported)|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
+{: title="Response JSON object structure"}
+
+
+## Leader
+
+### `/internal/test/fetch_batch_ids` {#fetch-batch-ids}
+
+Retrieve the identifiers of every batch generated by the leader from a task's reports. This is only applicable to tasks with a fixed size query type.
+
+|Key|Value|
+|`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
+{: title="Request JSON object structure"}
+
+|Key|Value|
+|`status`|`"success"` if the task and its batch IDs were successfully looked up, or `"error"` otherwise.|
+|`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
+|`batchIds` (if successful)|An array of strings, where each string is a base64url-encoded DAP-PPM `BatchID`.|
 {: title="Response JSON object structure"}
 
 
@@ -195,6 +231,7 @@ Register a task with the collector, with the given configuration. Returns the co
 |`leader`|The leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
 |`collectorAuthenticationToken`|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
+|`queryType`|A number, representing the task's query type, as described in {{query}}.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -211,8 +248,7 @@ Send a collect request to the leader with the provided parameters, and return a 
 |Key|Value|
 |`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
 |`aggParam`|A base64url-encoded aggregation parameter.|
-|`batchIntervalStart`|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
-|`batchIntervalDuration`|The duration of the batch interval in seconds, as a number.|
+|`query`|An object, with the layout given in {{query-object}}. This provides the collect request's query, and in turn determines which reports should be included.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -282,7 +318,8 @@ The following sequence outlines how the test runner will use the above APIs on p
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the leader.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the helper.
 1. Send one or more `/internal/test/upload` requests ({{upload}}) to the client.
-1. Send a `/internal/test/collect_start` request ({{collect-start}}) to the collector. (this provides a handle for use in the next step)
+1. If the task has a fixed size query type, send a `/internal/test/fetch_batch_ids` request ({{fetch-batch-ids}}) to the leader.
+1. Send one or more `/internal/test/collect_start` requests ({{collect-start}}) to the collector. (this provides a handle for use in the next step)
 1. Send `/internal/test/collect_poll` requests ({{collect-poll}}) to the collector, polling until it is completed. (the collector will provide the calculated aggregate result)
 1. Stop containers.
 1. Copy logs out of each container.
