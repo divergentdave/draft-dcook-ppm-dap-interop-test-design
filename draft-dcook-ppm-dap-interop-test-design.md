@@ -186,10 +186,11 @@ The HPKE keypair generated for this task should use the mandatory-to-implement a
 |`aggregatorId`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
 |`verifyKey`|The verification key shared by the two aggregators, encoded with base64url.|
 |`maxBatchQueryCount`|A number, providing the maximum number of times any report can be included in a collect request.|
+|`queryType`|A number, representing the task's query type, as described in {{query}}.|
 |`minBatchSize`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
+|`maxBatchSize` (only present if `queryType` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected.|
 |`timePrecision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
 |`collectorHpkeConfig`|The collector’s HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
-|`queryType`|A number, representing the task's query type, as described in {{query}}.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
