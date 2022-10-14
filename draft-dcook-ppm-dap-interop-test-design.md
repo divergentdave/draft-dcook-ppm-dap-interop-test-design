@@ -23,7 +23,7 @@ author:
  -
     fullname: David Cook
     organization: ISRG
-    email: "dcook@letsencrypt.org"
+    email: "dcook@divviup.org"
 
 normative:
   DAP:
