@@ -111,9 +111,9 @@ Queries are represented in API requests as a nested object, with the following a
 
 |Key|Value|
 |`type`|A number, representing a query type, as described above.|
-|`batchIntervalStart` (only present if `type` is 1, for time interval queries)|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
-|`batchIntervalDuration` (only present if `type` is 1, for time interval queries)|The duration of the batch interval in seconds, as a number.|
-|`batchId` (only present if `type` is 2, for fixed size queries)|A base64url-encoded DAP-PPM `BatchID`.|
+|`batch_interval_start` (only present if `type` is 1, for time interval queries)|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
+|`batch_interval_duration` (only present if `type` is 1, for time interval queries)|The duration of the batch interval in seconds, as a number.|
+|`batch_id` (only present if `type` is 2, for fixed size queries)|A base64url-encoded DAP-PPM `BatchID`.|
 {: title="Query JSON object structure" #query-object}
 
 
@@ -129,13 +129,13 @@ The test runner will POST an empty object (i.e. `{}`) to this endpoint to check 
 Upon receipt of this command, the client container will construct a DAP-PPM report with the given configuration and measurement, and submit it. The client container will send its response to the test runner once report submission has either succeeded or permanently failed.
 
 |Key|Value|
-|`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
 |`leader`|The leader's endpoint URL.|
 |`helper`|The helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
 |`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10).|
 |`time` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
-|`timePrecision`|A number, providing the precision in seconds of report timestamps.|
+|`time_precision`|A number, providing the precision in seconds of report timestamps.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -158,8 +158,8 @@ Request the base URL for DAP-PPM endpoints for a new task. This API will be invo
 The test runner will provide the hostname at which the aggregator is externally reachable. If the aggregator returns a relative URL, the test runner will combine it with the hostname into an absolute URL, assuming that the port is 8080. Otherwise, the aggregator can incorporate the hostname into an absolute URL and return that.
 
 |Key|Value|
-|`taskId`|A base64url-encoded DAP-PPM `TaskId`|
-|`aggregatorId`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
+|`task_id`|A base64url-encoded DAP-PPM `TaskId`|
+|`aggregator_id`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
 |`hostname`|This aggregator's hostname in the interoperation test environment. This may optionally be used in constructing the endpoint URL as an absolute URL.|
 {: title="Request JSON object structure"}
 
@@ -177,20 +177,20 @@ Register a task with the aggregator, with the given configuration and secrets.
 The HPKE keypair generated for this task should use the mandatory-to-implement algorithms in section 6 of [DAP-PPM], for broad compatibility.
 
 |Key|Value|
-|`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
 |`leader`|The leader's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`helper`|The helper's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`leaderAuthenticationToken`|The authentication token that is shared with the other aggregator, as a string. This string must be safe for use as an HTTP header value. When the leader sends HTTP requests to the helper, it should include this value in a header named `DAP-Auth-Token`.|
-|`collectorAuthenticationToken` (only present if `aggregatorId` is 0)|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
-|`aggregatorId`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
-|`verifyKey`|The verification key shared by the two aggregators, encoded with base64url.|
-|`maxBatchQueryCount`|A number, providing the maximum number of times any report can be included in a collect request.|
-|`queryType`|A number, representing the task's query type, as described in {{query}}.|
-|`minBatchSize`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
-|`maxBatchSize` (only present if `queryType` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected.|
-|`timePrecision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
-|`collectorHpkeConfig`|The collector’s HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
+|`leader_authentication_token`|The authentication token that is shared with the other aggregator, as a string. This string must be safe for use as an HTTP header value. When the leader sends HTTP requests to the helper, it should include this value in a header named `DAP-Auth-Token`.|
+|`collector_authentication_token` (only present if `aggregator_id` is 0)|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
+|`aggregator_id`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
+|`verify_key`|The verification key shared by the two aggregators, encoded with base64url.|
+|`max_batch_query_count`|A number, providing the maximum number of times any report can be included in a collect request.|
+|`query_type`|A number, representing the task's query type, as described in {{query}}.|
+|`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
+|`max_batch_size` (only present if `query_type` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected.|
+|`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
+|`collector_hpke_config`|The collector’s HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -206,13 +206,13 @@ The HPKE keypair generated for this task should use the mandatory-to-implement a
 Retrieve the identifiers of every batch generated by the leader from a task's reports. This is only applicable to tasks with a fixed size query type.
 
 |Key|Value|
-|`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
 |`status`|`"success"` if the task and its batch IDs were successfully looked up, or `"error"` otherwise.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`batchIds` (if successful)|An array of strings, where each string is a base64url-encoded DAP-PPM `BatchID`.|
+|`batch_ids` (if successful)|An array of strings, where each string is a base64url-encoded DAP-PPM `BatchID`.|
 {: title="Response JSON object structure"}
 
 
@@ -228,17 +228,17 @@ The test runner will POST an empty object (i.e. `{}`) to this endpoint to check 
 Register a task with the collector, with the given configuration. Returns the collector’s HPKE configuration for this task.
 
 |Key|Value|
-|`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
 |`leader`|The leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`collectorAuthenticationToken`|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
-|`queryType`|A number, representing the task's query type, as described in {{query}}.|
+|`collector_authentication_token`|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
+|`query_type`|A number, representing the task's query type, as described in {{query}}.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
 |`status`|`"success"` if the task was successfully set up, or `"error"` otherwise. (for example, if the VDAF was not supported)|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`collectorHpkeConfig` (if successful)|The collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
+|`collector_hpke_config` (if successful)|The collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
 {: title="Response JSON object structure"}
 
 
@@ -247,8 +247,8 @@ Register a task with the collector, with the given configuration. Returns the co
 Send a collect request to the leader with the provided parameters, and return a handle to the test runner identifying this collect request. The test runner will provide this handle to the collector in subsequent `/internal/test/collect_poll` requests (see {{collect-poll}}).
 
 |Key|Value|
-|`taskId`|A base64url-encoded DAP-PPM `TaskId`.|
-|`aggParam`|A base64url-encoded aggregation parameter.|
+|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
+|`agg_param`|A base64url-encoded aggregation parameter.|
 |`query`|An object, with the layout given in {{query-object}}. This provides the collect request's query, and in turn determines which reports should be included.|
 {: title="Request JSON object structure"}
 
@@ -270,7 +270,7 @@ Upon receiving this command, the collector will poll the leader’s collect URL 
 |Key|Value|
 |`status`|Either `"complete"` if the result was returned, `"in progress"` if the result was not yet ready, or `"error"` if an error occurred.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`reportCount` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
+|`report_count` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
 |`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128CountVec or Prio3Aes128Histogram, this will be an array of strings, each representing an integer in base 10.|
 {: title="Response JSON object structure"}
 
