@@ -380,7 +380,7 @@ Test cases could be written to cover the following scenarios.
 * Test that uploading a report with a time far in the future is rejected.
 * Confirm that leaders and helpers reject requests with respective
   authentication tokens that are incorrect.
-* Test enforcement of `max_batch_lifetime` by making overlapping collect
+* Test enforcement of `max_batch_query_count` by making overlapping collect
   requests.
 * Perform an entire aggregation and collect flow, attempt to upload a late
   report that falls into the same collect interval, and test that performing the
