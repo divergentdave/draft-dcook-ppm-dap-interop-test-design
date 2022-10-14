@@ -236,7 +236,7 @@ URL and return that.
 
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`|
-|`aggregator_id`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
+|`role`|2 if this aggregator is the leader, or 3 if this aggregator is the helper. (following the values of the `Role` enum in [DAP])|
 |`hostname`|This aggregator's hostname in the interoperation test environment. This may optionally be used in constructing the endpoint URL as an absolute URL.|
 {: title="Request JSON object structure"}
 
@@ -260,8 +260,8 @@ algorithms in section 6 of [DAP], for broad compatibility.
 |`helper`|The helper's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
 |`leader_authentication_token`|The authentication token that is shared with the other aggregator, as a string. This string must be safe for use as an HTTP header value. When the leader sends HTTP requests to the helper, it should include this value in a header named `DAP-Auth-Token`.|
-|`collector_authentication_token` (only present if `aggregator_id` is 0)|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
-|`aggregator_id`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
+|`collector_authentication_token` (only present if `role` is 2, i.e. the leader)|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
+|`role`|2 if this aggregator is the leader, or 3 if this aggregator is the helper. (following the values of the `Role` enum in [DAP])|
 |`verify_key`|The verification key shared by the two aggregators, encoded with base64url.|
 |`max_batch_query_count`|A number, providing the maximum number of times any report can be included in a collect request.|
 |`query_type`|A number, representing the task's query type, as described in {{query}}.|
