@@ -26,7 +26,7 @@ author:
     email: "dcook@letsencrypt.org"
 
 normative:
-  DAP-PPM:
+  DAP:
     title: "Distributed Aggregation Protocol for Privacy Preserving Measurement"
     date: 2022-09-22
     target: "https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-02"
@@ -45,7 +45,7 @@ informative:
       - ins: M. Seemann
       - ins: J. Iyengar
   Janus:
-    title: Experimental implementation of the DAP-PPM specification
+    title: Experimental implementation of the DAP specification
     date: 2022-08-25
     target: https://github.com/divviup/janus
 
@@ -53,11 +53,10 @@ informative:
 --- abstract
 
 This document defines a common test interface for implementations of the
-Distributed Aggregation Protocol for Privacy Preserving Measurement (DAP-PPM)
-and describes how this test interface can be used to perform interoperation
-testing between the implementations. Tests are orchestrated with containers, and
-new test-only APIs are introduced to provision DAP-PPM tasks and initiate
-processing.
+Distributed Aggregation Protocol for Privacy Preserving Measurement (DAP) and
+describes how this test interface can be used to perform interoperation testing
+between the implementations. Tests are orchestrated with containers, and new
+test-only APIs are introduced to provision DAP tasks and initiate processing.
 
 
 --- middle
@@ -65,18 +64,18 @@ processing.
 # Introduction
 
 This document defines a common test interface for implementations of the
-Distributed Aggregation Protocol for Privacy Preserving Measurement [DAP-PPM].
-This test interface facilitates interoperation tests between different
-participating DAP-PPM implementations. As DAP-PPM has four distinct protocol
-roles, (client, leader aggregator, helper aggregator, and collector) manual
-interoperation testing between all combinations of even a small number of
-DAP-PPM implementations could be taxing. The goal of this document's common test
-interface is to enable automation of these interoperation tests, so that
-different participating implementations can be exchanged for each other, and the
-same test suite can be re-run on different combinations of implementations.
-Simplifying interoperation testing will aid in identifying errors in
-implementations, identifying ambiguities in the protocol specification, and
-reducing regressions in implementations.
+Distributed Aggregation Protocol for Privacy Preserving Measurement [DAP]. This
+test interface facilitates interoperation tests between different participating
+DAP implementations. As DAP has four distinct protocol roles, (client, leader
+aggregator, helper aggregator, and collector) manual interoperation testing
+between all combinations of even a small number of DAP implementations could be
+taxing. The goal of this document's common test interface is to enable
+automation of these interoperation tests, so that different participating
+implementations can be exchanged for each other, and the same test suite can be
+re-run on different combinations of implementations. Simplifying interoperation
+testing will aid in identifying errors in implementations, identifying
+ambiguities in the protocol specification, and reducing regressions in
+implementations.
 
 Taking inspiration from QuicInteropRunner [SI2020], each participating
 implementation provides one or more container images adhering to a common
@@ -106,13 +105,13 @@ When the container’s entry point executable is run, it SHALL start up an HTTP
 server listening on port 8080. In all cases, the container will serve the
 endpoints described in {{test-api}} (particularly, the subsection appropriate to
 its protocol role). In the case of a helper or leader container, it SHALL also
-serve the endpoints specified by [DAP-PPM] on a port (which MAY be the same port
+serve the endpoints specified by [DAP] on a port (which MAY be the same port
 8080 as used to serve the interoperation test API) at some relative path. The
 container should run indefinitely, and the test runner will terminate the
-container on completion of the test case. (While DAP-PPM requires HTTPS
-connections, only using HTTP between containers simplifies test setup. Putting
-TLS client/server interop out-of-scope for these tests is acceptable, as it’s
-not of interest.)
+container on completion of the test case. (While DAP requires HTTPS connections,
+only using HTTP between containers simplifies test setup. Putting TLS
+client/server interop out-of-scope for these tests is acceptable, as it’s not of
+interest.)
 
 Log output SHOULD be captured into the directory “/logs” inside the container.
 This will be copied out to the host for inspection on completion of the test
@@ -136,7 +135,7 @@ process.
 
 Each of these test APIs should return a status code of 200 OK if the command was
 received, recognized, and parsed successfully, regardless of whether any
-underlying DAP-PPM request succeeded or failed. The DAP-level success or failure
+underlying DAP request succeeded or failed. The DAP-level success or failure
 will be included in the test API response body. If a request is made to an
 endpoint starting with “/internal/test/”, but not listed here, a status code of
 404 Not Found SHOULD be returned, to simplify the introduction of new test APIs.
@@ -166,7 +165,7 @@ and in one API, it will need to send a query type along with the associated
 query parameters.
 
 Query types are represented in API requests as numbers, following the values of
-the `QueryType` enum in [DAP-PPM].
+the `QueryType` enum in [DAP].
 
 Queries are represented in API requests as a nested object, with the following
 attributes (new keys will be added as new query types are defined).
@@ -175,7 +174,7 @@ attributes (new keys will be added as new query types are defined).
 |`type`|A number, representing a query type, as described above.|
 |`batch_interval_start` (only present if `type` is 1, for time interval queries)|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
 |`batch_interval_duration` (only present if `type` is 1, for time interval queries)|The duration of the batch interval in seconds, as a number.|
-|`batch_id` (only present if `type` is 2, for fixed size queries)|A base64url-encoded DAP-PPM `BatchID`.|
+|`batch_id` (only present if `type` is 2, for fixed size queries)|A base64url-encoded DAP `BatchID`.|
 {: title="Query JSON object structure" #query-object}
 
 
@@ -190,13 +189,13 @@ return a status code of 200 OK.
 
 ### `/internal/test/upload` {#upload}
 
-Upon receipt of this command, the client container will construct a DAP-PPM
+Upon receipt of this command, the client container will construct a DAP
 report with the given configuration and measurement, and submit it. The client
 container will send its response to the test runner once report submission has
 either succeeded or permanently failed.
 
 |Key|Value|
-|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
 |`leader`|The leader's endpoint URL.|
 |`helper`|The helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
@@ -222,13 +221,12 @@ return a status code of 200 OK.
 
 ### `/internal/test/endpoint_for_task` {#endpoint-for-task}
 
-Request the base URL for DAP-PPM endpoints for a new task. This API will be
-invoked immediately before `/internal/test/add_task` (see
-{{aggregator-add-task}}), to determine the endpoint URLs of the aggregators. If
-the aggregator uses a common set of DAP-PPM endpoints for all tasks, it could
-always return the same value, such as the relative URL `/`. Alternately,
-implementations may wish to generate new endpoints for each task, derive the
-endpoint based on the `TaskId`, etc.
+Request the base URL for DAP endpoints for a new task. This API will be invoked
+immediately before `/internal/test/add_task` (see {{aggregator-add-task}}), to
+determine the endpoint URLs of the aggregators. If the aggregator uses a common
+set of DAP endpoints for all tasks, it could always return the same value, such
+as the relative URL `/`. Alternately, implementations may wish to generate new
+endpoints for each task, derive the endpoint based on the `TaskId`, etc.
 
 The test runner will provide the hostname at which the aggregator is externally
 reachable. If the aggregator returns a relative URL, the test runner will
@@ -237,7 +235,7 @@ combine it with the hostname into an absolute URL, assuming that the port is
 URL and return that.
 
 |Key|Value|
-|`task_id`|A base64url-encoded DAP-PPM `TaskId`|
+|`task_id`|A base64url-encoded DAP `TaskId`|
 |`aggregator_id`|0 if this aggregator is the leader, or 1 if this aggregator is the helper.|
 |`hostname`|This aggregator's hostname in the interoperation test environment. This may optionally be used in constructing the endpoint URL as an absolute URL.|
 {: title="Request JSON object structure"}
@@ -245,7 +243,7 @@ URL and return that.
 |Key|Value|
 |`status`|`"success"` if the endpoint was successfully selected or set up, or `"error"` otherwise.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`endpoint`|A relative or absolute URL, specifying the DAP-PPM aggregator endpoint that should be used for this task. If the test runner receives a relative URL, it will transform it into an absolute URL before performing the next phase of task setup.|
+|`endpoint`|A relative or absolute URL, specifying the DAP aggregator endpoint that should be used for this task. If the test runner receives a relative URL, it will transform it into an absolute URL before performing the next phase of task setup.|
 {: title="Response JSON object structure"}
 
 
@@ -254,10 +252,10 @@ URL and return that.
 Register a task with the aggregator, with the given configuration and secrets.
 
 The HPKE keypair generated for this task should use the mandatory-to-implement
-algorithms in section 6 of [DAP-PPM], for broad compatibility.
+algorithms in section 6 of [DAP], for broad compatibility.
 
 |Key|Value|
-|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
 |`leader`|The leader's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`helper`|The helper's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
@@ -287,13 +285,13 @@ Retrieve the identifiers of every batch generated by the leader from a task's
 reports. This is only applicable to tasks with a fixed size query type.
 
 |Key|Value|
-|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
 |`status`|`"success"` if the task and its batch IDs were successfully looked up, or `"error"` otherwise.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`batch_ids` (if successful)|An array of strings, where each string is a base64url-encoded DAP-PPM `BatchID`.|
+|`batch_ids` (if successful)|An array of strings, where each string is a base64url-encoded DAP `BatchID`.|
 {: title="Response JSON object structure"}
 
 
@@ -312,7 +310,7 @@ Register a task with the collector, with the given configuration. Returns the
 collector’s HPKE configuration for this task.
 
 |Key|Value|
-|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
 |`leader`|The leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
 |`collector_authentication_token`|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
@@ -334,7 +332,7 @@ provide this handle to the collector in subsequent `/internal/test/collect_poll`
 requests (see {{collect-poll}}).
 
 |Key|Value|
-|`task_id`|A base64url-encoded DAP-PPM `TaskId`.|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
 |`agg_param`|A base64url-encoded aggregation parameter.|
 |`query`|An object, with the layout given in {{query-object}}. This provides the collect request's query, and in turn determines which reports should be included.|
 {: title="Request JSON object structure"}
@@ -366,10 +364,10 @@ and result to the test runner.
 
 ### Heavy Hitters
 
-Once Poplar1 reaches a future draft of [DAP-PPM], additional test APIs for
-collector containers should be introduced to perform an entire Heavy Hitters
-computation on a given Poplar1 task and collection interval, encompassing
-multiple collect flows automatically initiated by the collector.
+Once Poplar1 reaches a future draft of [DAP], additional test APIs for collector
+containers should be introduced to perform an entire Heavy Hitters computation
+on a given Poplar1 task and collection interval, encompassing multiple collect
+flows automatically initiated by the collector.
 
 
 ## Test Cases
@@ -403,10 +401,10 @@ sending any further commands.
 Aggregator URLs will be constructed by the test runner with hostnames that
 resolve to the respective containers within the container network.
 
-Once a future [DAP-PPM] draft solves the issue of retries in the aggregate flow,
-a reverse proxy could be introduced in front of each aggregator to inject
-failures when sending requests or responses, to test the protocol's resilience.
-(It is known such a test would fail based on the current protocol.)
+Once a future [DAP] draft solves the issue of retries in the aggregate flow, a
+reverse proxy could be introduced in front of each aggregator to inject failures
+when sending requests or responses, to test the protocol's resilience. (It is
+known such a test would fail based on the current protocol.)
 
 
 ## Test Runner Operation
@@ -448,14 +446,14 @@ successful aggregation.
 
 [Janus] currently implements a version of this test interface.
 
-Additional DAP-PPM implementations would be warmly welcomed.
+Additional DAP implementations would be warmly welcomed.
 
 
 # Security Considerations
 
-Any DAP-PPM implementation that adopts this testing interface should ensure that
-the test-only APIs described herein are only present in software used for
-testing purposes, and not in production systems.
+Any DAP implementation that adopts this testing interface should ensure that the
+test-only APIs described herein are only present in software used for testing
+purposes, and not in production systems.
 
 
 # IANA Considerations
