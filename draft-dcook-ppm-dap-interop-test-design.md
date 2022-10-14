@@ -26,15 +26,8 @@ author:
     email: "dcook@letsencrypt.org"
 
 normative:
-  DAP:
-    title: "Distributed Aggregation Protocol for Privacy Preserving Measurement"
-    date: 2022-09-22
-    target: "https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-02"
-    author:
-      - ins: T. Geoghegan
-      - ins: C. Patton
-      - ins: E. Rescorla
-      - ins: C. A. Wood
+  DAP: I-D.draft-ietf-ppm-dap-02
+  VDAF: I-D.draft-irtf-cfrg-vdaf-03
 
 informative:
   SI2020:
@@ -128,10 +121,10 @@ responses for each endpoint listed below SHALL be encoded JSON objects
 {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task
 IDs, batch IDs, HPKE configurations, and verification keys) SHALL be encoded as
 strings with base64url {{!RFC4648}}, inside the JSON objects. Any integer values
-in a VDAF's parameters, measurement, or aggregate result will be encoded as
-strings in base 10 instead of as numbers. This avoids incompatibilities due to
-limitations on the range of JSON numbers that different implementations can
-process.
+in the parameters, measurement, or aggregate result of a {{VDAF}} will be
+encoded as strings in base 10 instead of as numbers. This avoids
+incompatibilities due to limitations on the range of JSON numbers that different
+implementations can process.
 
 Each of these test APIs should return a status code of 200 OK if the command was
 received, recognized, and parsed successfully, regardless of whether any
@@ -145,7 +138,7 @@ endpoint starting with “/internal/test/”, but not listed here, a status code
 
 ### VDAF
 
-In multiple APIs defined below, the test runner will send the name of a VDAF,
+In multiple APIs defined below, the test runner will send the name of a {{VDAF}},
 along with the parameters necessary to fully specify the VDAF. These will be
 stored in a nested object, with the following attributes (new `type` values and
 new keys will be added as new VDAFs are defined).
