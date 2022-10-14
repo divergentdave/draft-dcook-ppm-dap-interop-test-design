@@ -48,6 +48,14 @@ informative:
     title: Experimental implementation of the DAP specification
     date: 2022-08-25
     target: https://github.com/divviup/janus
+  divviup-ts:
+    title: "TypeScript client for https://divviup.org"
+    date: 2022-10-05
+    target: https://github.com/divviup/divviup-ts
+  REF-IMPL:
+    title: "Reference DAP interoperation test harness"
+    date: 2022-10-04
+    target: https://github.com/divergentdave/dap-interop-test-runner
 
 
 --- abstract
@@ -444,7 +452,8 @@ successful aggregation.
 
 # Implementation Status
 
-[Janus] currently implements a version of this test interface.
+[Janus] and [divviup-ts] currently implement a version of this test interface.
+[REF-IMPL] is a reference implementation of a test runner using this interface.
 
 Additional DAP implementations would be warmly welcomed.
 
