@@ -236,8 +236,8 @@ combine it with the hostname into an absolute URL, assuming that the port is
 URL and return that.
 
 |Key|Value|
-|`task_id`|A base64url-encoded DAP `TaskId`|
-|`role`|2 if this aggregator is the leader, or 3 if this aggregator is the helper. (following the values of the `Role` enum in [DAP])|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
+|`role`|Either `"leader"` or `"helper"`.|
 |`hostname`|This aggregator's hostname in the interoperation test environment. This may optionally be used in constructing the endpoint URL as an absolute URL.|
 {: title="Request JSON object structure"}
 
@@ -265,7 +265,7 @@ aggregator is the leader) using `/internal/test/add_authentication_token`
 |`leader`|The leader's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`helper`|The helper's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`role`|2 if this aggregator is the leader, or 3 if this aggregator is the helper. (following the values of the `Role` enum in [DAP])|
+|`role`|Either `"leader"` or `"helper"`.|
 |`verify_key`|The verification key shared by the two aggregators, encoded with base64url.|
 |`max_batch_query_count`|A number, providing the maximum number of times any report can be included in a collect request.|
 |`query_type`|A number, representing the task's query type, as described in {{query}}.|
