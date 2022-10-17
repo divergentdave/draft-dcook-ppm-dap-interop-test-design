@@ -255,13 +255,16 @@ Register a task with the aggregator, with the given configuration and secrets.
 The HPKE keypair generated for this task should use the mandatory-to-implement
 algorithms in section 6 of [DAP], for broad compatibility.
 
+After configuring a task with this API, the test runner MUST provide an
+aggregator authentication token (and a collector authentication token, if the
+aggregator is the leader) using `/internal/test/add_authentication_token`
+({{aggregator-add-auth-token}}) before otherwise using the task in tests.
+
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
 |`leader`|The leader's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`helper`|The helper's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`leader_authentication_token`|The authentication token that is shared with the other aggregator, as a string. This string must be safe for use as an HTTP header value. When the leader sends HTTP requests to the helper, it should include this value in a header named `DAP-Auth-Token`.|
-|`collector_authentication_token` (only present if `role` is 2, i.e. the leader)|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
 |`role`|2 if this aggregator is the leader, or 3 if this aggregator is the helper. (following the values of the `Role` enum in [DAP])|
 |`verify_key`|The verification key shared by the two aggregators, encoded with base64url.|
 |`max_batch_query_count`|A number, providing the maximum number of times any report can be included in a collect request.|
@@ -274,6 +277,25 @@ algorithms in section 6 of [DAP], for broad compatibility.
 
 |Key|Value|
 |`status`|`"success"` if the task was successfully set up, or `"error"` otherwise. (for example, if the VDAF was not supported)|
+|`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
+{: title="Response JSON object structure"}
+
+
+### `/internal/test/add_authentication_token` {#aggregator-add-auth-token}
+
+Associate an authentication token with a task, for the purposes of making
+authenticated requests to other protocol participants or validating
+authenticated requests from other protocol participants. Authenticated requests
+MUST include the token in an HTTP header named `DAP-Auth-Token`.
+
+|Key|Value|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
+|`role`|Either `"leader"` or `"collector"`, indicating which type of authentication token this is.|
+|`token`|The authentication token, as a string. This string must be safe for use as an HTTP header value.|
+{: title="Request JSON object structure"}
+
+|Key|Value|
+|`status`|`"success"` if the authentication token was successfully stored, or `"error"` otherwise.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
 {: title="Response JSON object structure"}
 
@@ -310,11 +332,17 @@ return a status code of 200 OK.
 Register a task with the collector, with the given configuration. Returns the
 collector’s HPKE configuration for this task.
 
+The HPKE keypair generated for this task should use the mandatory-to-implement
+algorithms in section 6 of [DAP], for broad compatibility.
+
+After configuring a task with this API, test runner MUST provide a collector
+authentication token using `/internal/test/add_authentication_token`
+({{collector-add-auth-token}}) before otherwise using the task in tests.
+
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
 |`leader`|The leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`collector_authentication_token`|The authentication token that is shared between the leader and collector, as a string. This string must be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it should include this value in a header named `DAP-Auth-Token`.|
 |`query_type`|A number, representing the task's query type, as described in {{query}}.|
 {: title="Request JSON object structure"}
 
@@ -322,6 +350,24 @@ collector’s HPKE configuration for this task.
 |`status`|`"success"` if the task was successfully set up, or `"error"` otherwise. (for example, if the VDAF was not supported)|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
 |`collector_hpke_config` (if successful)|The collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
+{: title="Response JSON object structure"}
+
+
+### `/internal/test/add_authentication_token` {#collector-add-auth-token}
+
+Associate an authentication token with a task, for the purpose of making
+authenticated requests to the leader. Authenticated requests MUST include the
+token in an HTTP header named `DAP-Auth-Token`.
+
+|Key|Value|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
+|`role`|The string `"collector"`.|
+|`token`|The authentication token, as a string. This string must be safe for use as an HTTP header value.|
+{: title="Request JSON object structure"}
+
+|Key|Value|
+|`status`|`"success"` if the authentication token was successfully stored, or `"error"` otherwise.|
+|`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
 {: title="Response JSON object structure"}
 
 
@@ -426,10 +472,18 @@ successful aggregation.
 1. Construct aggregator URLs using the above responses.
 1. Send a `/internal/test/add_task` request ({{collector-add-task}}) to the
    collector. (the collector generates an HPKE key pair as a side-effect)
+1. Send a `/internal/test/add_authentication_token` request
+   ({{collector-add-auth-token}}) to the collector.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
    leader.
+1. Send two `/internal/test/add_authentication_token` requests
+   ({{aggregator-add-auth-token}}) to the leader, one with the leader
+   authentication token, and one with the collector authentication token.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
    helper.
+1. Send a `/internal/test/add_authentication_token` request
+   ({{aggregator-add-auth-token}}) to the helper, with the leader authentication
+   token.
 1. Send one or more `/internal/test/upload` requests ({{upload}}) to the client.
 1. If the task has a fixed size query type, send a
    `/internal/test/fetch_batch_ids` request ({{fetch-batch-ids}}) to the leader.
