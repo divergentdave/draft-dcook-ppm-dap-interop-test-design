@@ -104,15 +104,15 @@ given repository, image name, and tag.
 
 When the container’s entry point executable is run, it SHALL start up an HTTP
 server listening on port 8080. In all cases, the container will serve the
-endpoints described in {{test-api}} (particularly, the subsection appropriate to
-its protocol role). In the case of a helper or leader container, it SHALL also
-serve the endpoints specified by [DAP] on a port (which MAY be the same port
-8080 as used to serve the interoperation test API) at some relative path. The
-container should run indefinitely, and the test runner will terminate the
-container on completion of the test case. (While DAP requires HTTPS connections,
-only using HTTP between containers simplifies test setup. Putting TLS
-client/server interop out-of-scope for these tests is acceptable, as it’s not of
-interest.)
+endpoints described in {{test-api}} (particularly, the subsection or
+subsections appropriate to its protocol role). In the case of a helper or
+leader container, it SHALL also serve the endpoints specified by [DAP] on a
+port (which MAY be the same port 8080 as used to serve the interoperation test
+API) at some relative path. The container should run indefinitely, and the test
+runner will terminate the container on completion of the test case. (While DAP
+requires HTTPS connections, only using HTTP between containers simplifies test
+setup. Putting TLS client/server interop out-of-scope for these tests is
+acceptable, as it’s not of interest.)
 
 Log output SHOULD be captured into the directory “/logs” inside the container.
 This will be copied out to the host for inspection on completion of the test
@@ -409,7 +409,7 @@ resolve to the respective containers within the container network.
 Once a future [DAP] draft solves the issue of retries in the aggregate flow, a
 reverse proxy could be introduced in front of each aggregator to inject failures
 when sending requests or responses, to test the protocol's resilience. (It is
-known such a test would fail based on the current protocol.)
+known such a test would fail with the current protocol.)
 
 
 ## Test Runner Operation
@@ -426,7 +426,8 @@ successful aggregation.
    verification key.
 1. Send a `/internal/test/endpoint_for_task` request ({{endpoint-for-task}}) to
    the leader.
-1. Send a `/internal/test/endpoint_for_task` request to the helper.
+1. Send a `/internal/test/endpoint_for_task` request ({{endpoint-for-task}}) to
+   the helper.
 1. Construct aggregator URLs using the above responses.
 1. Send a `/internal/test/add_task` request ({{collector-add-task}}) to the
    collector. (the collector generates an HPKE key pair as a side-effect)
@@ -440,8 +441,8 @@ successful aggregation.
 1. Send one or more `/internal/test/collect_start` requests ({{collect-start}})
    to the collector. (this provides a handle for use in the next step)
 1. Send `/internal/test/collect_poll` requests ({{collect-poll}}) to the
-   collector, polling until it is completed. (the collector will provide the
-   calculated aggregate result)
+   collector, polling until each collection is completed. (the collector will
+   provide the calculated aggregate results)
 1. Stop containers.
 1. Copy logs out of each container.
 1. Delete containers, and clean up container networking resources.
