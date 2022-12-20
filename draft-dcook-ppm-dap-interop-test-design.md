@@ -127,10 +127,10 @@ Each container will have an HTTP server listening on port 8080 for commands from
 the test runner. All requests MUST use the HTTP method POST. Requests and
 responses for each endpoint listed below SHALL be encoded JSON objects
 {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task
-IDs, batch IDs, HPKE configurations, and verification keys) SHALL be encoded as
-strings with base64url {{!RFC4648}}, inside the JSON objects. Any integer values
-in the parameters, measurement, or aggregate result of a {{VDAF}} will be
-encoded as strings in base 10 instead of as numbers. This avoids
+IDs, batch IDs, HPKE configurations, and VDAF verification keys) SHALL be
+encoded as strings with base64url {{!RFC4648}}, inside the JSON objects. Any
+integer values in the parameters, measurement, or aggregate result of a {{VDAF}}
+will be encoded as strings in base 10 instead of as numbers. This avoids
 incompatibilities due to limitations on the range of JSON numbers that different
 implementations can process.
 
@@ -263,7 +263,7 @@ algorithms in section 6 of [DAP], for broad compatibility.
 |`leader_authentication_token`|The authentication token that is shared with the other aggregator, as a string. This string MUST be safe for use as an HTTP header value. When the leader sends HTTP requests to the helper, it MUST include this value in a header named `DAP-Auth-Token`.|
 |`collector_authentication_token` (only present if `role` is `"leader"`)|The authentication token that is shared between the leader and collector, as a string. This string MUST be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it MUST include this value in a header named `DAP-Auth-Token`.|
 |`role`|Either `"leader"` or `"helper"`.|
-|`verify_key`|The verification key shared by the two aggregators, encoded with base64url.|
+|`vdaf_verify_key`|The VDAF verification key shared by the two aggregators, encoded with base64url.|
 |`max_batch_query_count`|A number, providing the maximum number of times any report can be included in a collect request.|
 |`query_type`|A number, representing the task's query type, as described in {{query}}.|
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
