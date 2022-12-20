@@ -49,6 +49,10 @@ informative:
     title: "Reference DAP interoperation test harness"
     date: 2022-10-04
     target: https://github.com/divergentdave/dap-interop-test-runner
+  Daphne:
+    title: Implementation of DAP
+    date: 2022-12-15
+    target: https://github.com/cloudflare/daphne
 
 
 --- abstract
@@ -450,8 +454,9 @@ successful aggregation.
 
 # Implementation Status
 
-[Janus] and [divviup-ts] currently implement a version of this test interface.
-[REF-IMPL] is a reference implementation of a test runner using this interface.
+[Janus], [divviup-ts], and [Daphne] currently implement a version of this test
+interface. [REF-IMPL] is a reference implementation of a test runner using this
+interface.
 
 Additional DAP implementations would be warmly welcomed.
 
