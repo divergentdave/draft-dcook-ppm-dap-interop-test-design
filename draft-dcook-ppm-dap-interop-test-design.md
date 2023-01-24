@@ -155,9 +155,9 @@ stored in a nested object, with the following attributes (new `type` values and
 new keys will be added as new VDAFs are defined).
 
 |Key|Value|
-|`type`|One of `"Prio3Aes128Count"`, `"Prio3Aes128CountVec"`, `"Prio3Aes128Sum"`, or `"Prio3Aes128Histogram"`|
+|`type`|One of `"Prio3Aes128Count"`, `"Prio3Aes128CountVec"`, `"Prio3Aes128Sum"`, `"Prio3Aes128Histogram"`, or `"Poplar1Aes128"`|
 |`length` (only present if `type` is `"Prio3Aes128CountVec"`)|The length of the vectors being summed, (encoded in base 10 as a string) used to parameterize the Prio3Aes128CountVec VDAF.|
-|`bits` (only present if `type` is `"Prio3Aes128Sum"`)|The bit width of the integers being summed, (encoded in base 10 as a string) used to parameterize the Prio3Aes128Sum VDAF.|
+|`bits` (only present if `type` is `"Prio3Aes128Sum"` or `"Poplar1Aes128"`)|In the case of Prio3Aes128Sum, the bit width of the integers being summed, encoded in base 10 as a string. In the case of Poplar1Aes128, the bit length of the input, encoded in base 10 as a string.|
 |`buckets` (only present if `type` is `"Prio3Aes128Histogram"`)|An array of histogram bucket boundaries, (encoded in base 10 as strings) used to parameterize the Prio3Aes128Histogram VDAF.|
 {: title="VDAF JSON object structure" #vdaf-object}
 
@@ -204,7 +204,7 @@ either succeeded or permanently failed.
 |`leader`|The leader's endpoint URL.|
 |`helper`|The helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
-|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10).|
+|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Poplar1Aes128"`: a string, equal to the input extended to a byte boundary with zero bits, and then base64url-encoded.|
 |`time` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps.|
 {: title="Request JSON object structure"}
@@ -337,29 +337,61 @@ requests (see {{collect-poll}}).
 
 ### `/internal/test/collect_poll` {#collect-poll}
 
-Upon receiving this command, the collector will poll the leader’s collect URL
-for the collect job associated with the provided handle, and provide the status
-and result to the test runner.
+The test runner sends this command to a collector to poll for completion of the
+collect job associated with the provided handle. The collector provides the
+status and (if available) result to the test runner.
 
 |Key|Value|
 |`handle`|The handle for a collect request from a previous invocation of `/internal/test/collect_start`. (see {{collect-start}})|
 {: title="Request JSON object structure"}
 
 |Key|Value|
-|`status`|Either `"complete"` if the result was returned, `"in progress"` if the result was not yet ready, or `"error"` if an error occurred.|
+|`status`|Either `"complete"` if the result is ready, `"in progress"` if the result is not yet ready, or `"error"` if an error occurred.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
 |`batch_id` (if the task uses fixed size queries)|The identifier of the batch that was collected, encoded with base64url.|
 |`report_count` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
-|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128CountVec or Prio3Aes128Histogram, this will be an array of strings, each representing an integer in base 10.|
+|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128CountVec, Prio3Aes128Histogram, or Poplar1Aes128, this will be an array of strings, each representing an integer in base 10.|
 {: title="Response JSON object structure"}
 
 
-### Heavy Hitters
+### `/internal/test/heavy_hitters_start` {#heavy-hitters-start}
 
-Once Poplar1 reaches a future draft of [DAP], additional test APIs for collector
-containers should be introduced to perform an entire Heavy Hitters computation
-on a given Poplar1 task and collection interval, encompassing multiple collect
-flows automatically initiated by the collector.
+Starts a series of aggregations to find the most common client inputs during a
+batch interval, and returns a handle to the test runner identifying this heavy
+hitters request. The test runner will provide this handle to the collector in
+subsequent `/internal/test/heavy_hitters_poll` requests (see
+{{heavy-hitters-poll}}). This API can only be used with Poplar1 DAP tasks.
+
+|Key|Value|
+|`task_id`|A base64url-encoded DAP `TaskId`.|
+|`count`|Determines how many of the most common inputs should be returned.|
+|`query`|An object, with the layout given in {{query-object}}. This provides the query for each underlying collect request, and in turn determines which reports should be included.|
+{: title="Request JSON object structure"}
+
+|Key|Value|
+|`status`|`"success"` if the collect request succeeded, or `"error"` otherwise.|
+|`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
+|`handle` (if successful)|A handle produced by the collector to refer to this heavy hitters request. This must be a string.|
+{: title="Response JSON object structure"}
+
+
+### `/internal/test/heavy_hitters_poll` {#heavy-hitters-poll}
+
+The test runner sends this command to a collector to poll for completion of a
+run of the heavy hitters algorithm, where the original request is identified by
+the provided handle. The collector provides the status and (if available) result
+to the test runner.
+
+|Key|Value|
+|`handle`|The handle for a heavy hitters request from a previous invocation of `/internal/test/heavy_hitters_start`. (see {{heavy-hitters-start}})|
+{: title="Request JSON object structure"}
+
+|Key|Value|
+|`status`|Either `"complete"` if the result is ready, `"in progress"` if the result is not yet ready, or `"error"` if an error occurred.|
+|`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
+|`report_count` (if complete)|A number, reflecting the count of client reports included in this result.|
+|`result` (if complete)|The result of the heavy hitters algorithm. This will be an array of objects, with length equal to the `count` parameter from the original request. Each object contains a "count" attribute, with a number value equal to the number of times an input occurred in the batch, and an "input" attribute, with a string value equal to the corresponding input, extended to a byte boundary with zero bits, and then base64url-encoded.|
+{: title="Response JSON object structure"}
 
 
 ## Test Cases
