@@ -354,46 +354,6 @@ status and (if available) result to the test runner.
 {: title="Response JSON object structure"}
 
 
-### `/internal/test/heavy_hitters_start` {#heavy-hitters-start}
-
-Starts a series of aggregations to find the most common client inputs during a
-batch interval, and returns a handle to the test runner identifying this heavy
-hitters request. The test runner will provide this handle to the collector in
-subsequent `/internal/test/heavy_hitters_poll` requests (see
-{{heavy-hitters-poll}}). This API can only be used with Poplar1 DAP tasks.
-
-|Key|Value|
-|`task_id`|A base64url-encoded DAP `TaskId`.|
-|`count`|Determines how many of the most common inputs should be returned.|
-|`query`|An object, with the layout given in {{query-object}}. This provides the query for each underlying collect request, and in turn determines which reports should be included.|
-{: title="Request JSON object structure"}
-
-|Key|Value|
-|`status`|`"success"` if the collect request succeeded, or `"error"` otherwise.|
-|`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`handle` (if successful)|A handle produced by the collector to refer to this heavy hitters request. This must be a string.|
-{: title="Response JSON object structure"}
-
-
-### `/internal/test/heavy_hitters_poll` {#heavy-hitters-poll}
-
-The test runner sends this command to a collector to poll for completion of a
-run of the heavy hitters algorithm, where the original request is identified by
-the provided handle. The collector provides the status and (if available) result
-to the test runner.
-
-|Key|Value|
-|`handle`|The handle for a heavy hitters request from a previous invocation of `/internal/test/heavy_hitters_start`. (see {{heavy-hitters-start}})|
-{: title="Request JSON object structure"}
-
-|Key|Value|
-|`status`|Either `"complete"` if the result is ready, `"in progress"` if the result is not yet ready, or `"error"` if an error occurred.|
-|`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`report_count` (if complete)|A number, reflecting the count of client reports included in this result.|
-|`result` (if complete)|The result of the heavy hitters algorithm. This will be an array of objects, with length equal to the `count` parameter from the original request. Each object contains a "count" attribute, with a number value equal to the number of times an input occurred in the batch, and an "input" attribute, with a string value equal to the corresponding input, extended to a byte boundary with zero bits, and then base64url-encoded.|
-{: title="Response JSON object structure"}
-
-
 ## Test Cases
 
 Test cases could be written to cover the following scenarios.
