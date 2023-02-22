@@ -204,7 +204,7 @@ either succeeded or permanently failed.
 |`leader`|The leader's endpoint URL.|
 |`helper`|The helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
-|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Poplar1Aes128"`: a string, equal to the input extended to a byte boundary with zero bits, and then base64url-encoded.|
+|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Poplar1Aes128"`: an array of Booleans.|
 |`time` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps.|
 {: title="Request JSON object structure"}
