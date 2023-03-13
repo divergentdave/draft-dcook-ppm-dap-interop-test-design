@@ -105,7 +105,7 @@ role. Implementations may want to submit a single aggregator image in both the
 leader list and helper list. The test runner will fetch each container using the
 given repository, image name, and tag.
 
-When the container’s entry point executable is run, it SHALL start up an HTTP
+When the container's entry point executable is run, it SHALL start up an HTTP
 server listening on port 8080. In all cases, the container will serve the
 endpoints described in {{test-api}} (particularly, the subsection or
 subsections appropriate to its protocol role). In the case of a helper or
@@ -115,9 +115,9 @@ API) at some relative path. The container should run indefinitely, and the test
 runner will terminate the container on completion of the test case. (While DAP
 requires HTTPS connections, only using HTTP between containers simplifies test
 setup. Putting TLS client/server interop out-of-scope for these tests is
-acceptable, as it’s not of interest.)
+acceptable, as it's not of interest.)
 
-Log output SHOULD be captured into the directory “/logs” inside the container.
+Log output SHOULD be captured into the directory "/logs" inside the container.
 This will be copied out to the host for inspection on completion of the test
 case.
 
@@ -141,7 +141,7 @@ Each of these test APIs should return a status code of 200 OK if the command was
 received, recognized, and parsed successfully, regardless of whether any
 underlying DAP request succeeded or failed. The DAP-level success or failure
 will be included in the test API response body. If a request is made to an
-endpoint starting with “/internal/test/”, but not listed here, a status code of
+endpoint starting with "/internal/test/", but not listed here, a status code of
 404 Not Found SHOULD be returned, to simplify the introduction of new test APIs.
 
 
@@ -273,7 +273,7 @@ algorithms in section 6 of [DAP], for broad compatibility.
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
 |`max_batch_size` (only present if `query_type` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
-|`collector_hpke_config`|The collector’s HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
+|`collector_hpke_config`|The collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
 |`task_expiration`|A number, providing the time when clients are no longer expected to upload to this task. This is represented as a number of seconds since the UNIX epoch.|
 {: title="Request JSON object structure"}
 
@@ -295,7 +295,7 @@ return a status code of 200 OK.
 ### `/internal/test/add_task` {#collector-add-task}
 
 Register a task with the collector, with the given configuration. Returns the
-collector’s HPKE configuration for this task.
+collector's HPKE configuration for this task.
 
 The HPKE keypair generated for this task should use the mandatory-to-implement
 algorithms in section 6 of [DAP], for broad compatibility.
