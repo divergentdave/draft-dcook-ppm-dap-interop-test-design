@@ -386,10 +386,9 @@ sending any further commands.
 Aggregator URLs will be constructed by the test runner with hostnames that
 resolve to the respective containers within the container network.
 
-Once a future [DAP] draft solves the issue of retries in the aggregate flow, a
-reverse proxy could be introduced in front of each Aggregator to inject failures
-when sending requests or responses, to test the protocol's resilience. (It is
-known such a test would fail with the current protocol.)
+A reverse proxy could be introduced in front of each Aggregator to inject
+failures when sending requests or responses, to test round skew recovery
+stragegies and overall implementation resilience.
 
 
 ## Test Runner Operation
