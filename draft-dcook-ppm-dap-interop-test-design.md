@@ -350,6 +350,8 @@ status and (if available) result to the test runner.
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
 |`batch_id` (if the task uses fixed size queries)|The identifier of the batch that was collected, encoded with base64url.|
 |`report_count` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
+|`interval_start` (if complete)|The start of the collection's interval, represented as a number equal to the number of seconds since the UNIX epoch.|
+|`interval_duration` (if complete)|The duration of the collection's interval in seconds, as a number.|
 |`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128CountVec, Prio3Aes128Histogram, or Poplar1Aes128, this will be an array of strings, each representing an integer in base 10.|
 {: title="Response JSON object structure"}
 
