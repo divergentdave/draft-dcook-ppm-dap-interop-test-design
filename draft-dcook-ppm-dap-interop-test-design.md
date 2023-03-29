@@ -255,8 +255,9 @@ URL and return that.
 
 Register a task with the Aggregator, with the given configuration and secrets.
 
-The HPKE keypair generated for this task should use the mandatory-to-implement
-algorithms in section 6 of [DAP], for broad compatibility.
+At least one of the HPKE keypairs available for this task should use the
+mandatory-to-implement algorithms in section 6 of [DAP], for broad
+compatibility.
 
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
