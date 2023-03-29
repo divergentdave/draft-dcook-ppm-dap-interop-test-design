@@ -268,7 +268,7 @@ algorithms in section 6 of [DAP], for broad compatibility.
 |`collector_authentication_token` (only present if `role` is `"leader"`)|The authentication token that is shared between the leader and collector, as a string. This string MUST be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it MUST include this value in a header named `DAP-Auth-Token`.|
 |`role`|Either `"leader"` or `"helper"`.|
 |`vdaf_verify_key`|The VDAF verification key shared by the two aggregators, encoded with base64url.|
-|`max_batch_query_count`|A number, providing the maximum number of times any report can be included in a collect request.|
+|`max_batch_query_count`|A number, providing the maximum number of batches any report may be included in, and thus the number of aggregate results it may contribute to.|
 |`query_type`|A number, representing the task's query type, as described in {{query}}.|
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
 |`max_batch_size` (only present if `query_type` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected.|
@@ -315,34 +315,34 @@ algorithms in section 6 of [DAP], for broad compatibility.
 {: title="Response JSON object structure"}
 
 
-### `/internal/test/collect_start` {#collect-start}
+### `/internal/test/collection_start` {#collection-start}
 
-Send a collect request to the leader with the provided parameters, and return a
-handle to the test runner identifying this collect request. The test runner will
-provide this handle to the collector in subsequent `/internal/test/collect_poll`
-requests (see {{collect-poll}}).
+Send a collection request to the leader with the provided parameters, and return
+a handle to the test runner identifying this collection job. The test runner
+will provide this handle to the collector in subsequent
+`/internal/test/collection_poll` requests (see {{collection-poll}}).
 
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
 |`agg_param`|A base64url-encoded aggregation parameter.|
-|`query`|An object, with the layout given in {{query-object}}. This provides the collect request's query, and in turn determines which reports should be included.|
+|`query`|An object, with the layout given in {{query-object}}. This provides the collection job's query, and in turn determines which reports should be included.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
-|`status`|`"success"` if the collect request succeeded, or `"error"` otherwise.|
+|`status`|`"success"` if the collection request succeeded, or `"error"` otherwise.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`handle` (if successful)|A handle produced by the collector to refer to this collect request. This must be a string.|
+|`handle` (if successful)|A handle produced by the collector to refer to this collection job. This must be a string.|
 {: title="Response JSON object structure"}
 
 
-### `/internal/test/collect_poll` {#collect-poll}
+### `/internal/test/collection_poll` {#collection-poll}
 
 The test runner sends this command to a collector to poll for completion of the
-collect job associated with the provided handle. The collector provides the
-status and (if available) result to the test runner.
+collection job associated with the provided handle. The collector provides the
+status and (if available) results to the test runner.
 
 |Key|Value|
-|`handle`|The handle for a collect request from a previous invocation of `/internal/test/collect_start`. (see {{collect-start}})|
+|`handle`|The handle for a collection job from a previous invocation of `/internal/test/collection_start`. (see {{collection-start}})|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -366,11 +366,11 @@ Test cases could be written to cover the following scenarios.
 * Test that uploading a report with a time far in the future is rejected.
 * Confirm that leaders and helpers reject requests with respective
   authentication tokens that are incorrect.
-* Test enforcement of `max_batch_query_count` by making overlapping collect
+* Test enforcement of `max_batch_query_count` by making overlapping collection
   requests.
-* Perform an entire aggregation and collect flow, attempt to upload a late
-  report that falls into the same collect interval, and test that performing the
-  collect request a second time yields the same result.
+* Perform an entire aggregation and collection flow, attempt to upload a late
+  report that falls into the same batch interval, and test that performing the
+  collection request a second time yields the same result.
 * Attempt to upload a canned report from the test runner more than once, and
   confirm that anti-replay measures were effective by inspecting the aggregation
   result.
@@ -417,9 +417,10 @@ successful aggregation.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
    helper.
 1. Send one or more `/internal/test/upload` requests ({{upload}}) to the client.
-1. Send one or more `/internal/test/collect_start` requests ({{collect-start}})
-   to the collector. (this provides a handle for use in the next step)
-1. Send `/internal/test/collect_poll` requests ({{collect-poll}}) to the
+1. Send one or more `/internal/test/collection_start` requests
+   ({{collection-start}}) to the collector. (this provides a handle for use in
+   the next step)
+1. Send `/internal/test/collection_poll` requests ({{collection-poll}}) to the
    collector, polling until each collection is completed. (the collector will
    provide the calculated aggregate results)
 1. Stop containers.
