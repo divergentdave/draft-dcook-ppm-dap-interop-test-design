@@ -70,16 +70,15 @@ test-only APIs are introduced to provision DAP tasks and initiate processing.
 This document defines a common test interface for implementations of the
 Distributed Aggregation Protocol for Privacy Preserving Measurement [DAP]. This
 test interface facilitates interoperation tests between different participating
-DAP implementations. As DAP has four distinct protocol roles, (client, leader
-aggregator, helper aggregator, and collector) manual interoperation testing
-between all combinations of even a small number of DAP implementations could be
-taxing. The goal of this document's common test interface is to enable
-automation of these interoperation tests, so that different participating
-implementations can be exchanged for each other, and the same test suite can be
-re-run on different combinations of implementations. Simplifying interoperation
-testing will aid in identifying errors in implementations, identifying
-ambiguities in the protocol specification, and reducing regressions in
-implementations.
+DAP implementations. As DAP has four distinct protocol roles, (Client, Leader,
+Helper, and Collector) manual interoperation testing between all combinations of
+even a small number of DAP implementations could be taxing. The goal of this
+document's common test interface is to enable automation of these interoperation
+tests, so that different participating implementations can be exchanged for each
+other, and the same test suite can be re-run on different combinations of
+implementations. Simplifying interoperation testing will aid in identifying
+errors in implementations, identifying ambiguities in the protocol
+specification, and reducing regressions in implementations.
 
 Taking inspiration from QuicInteropRunner [SI2020], each participating
 implementation provides one or more container images adhering to a common
@@ -99,17 +98,17 @@ different sub-protocols.
 # Container Interface
 
 Each participating DAP implementation may provide one or more container images,
-one for each protocol role it implements. (client, leader, helper, and
-collector) A list of available container images will be maintained for each
-role. Implementations may want to submit a single aggregator image in both the
-leader list and helper list. The test runner will fetch each container using the
+one for each protocol role it implements. (Client, Leader, Helper, and
+Collector) A list of available container images will be maintained for each
+role. Implementations may want to submit a single Aggregator image in both the
+Leader list and Helper list. The test runner will fetch each container using the
 given repository, image name, and tag.
 
 When the container's entry point executable is run, it SHALL start up an HTTP
 server listening on port 8080. In all cases, the container will serve the
 endpoints described in {{test-api}} (particularly, the subsection or
-subsections appropriate to its protocol role). In the case of a helper or
-leader container, it SHALL also serve the endpoints specified by [DAP] on a
+subsections appropriate to its protocol role). In the case of a Helper or
+Leader container, it SHALL also serve the endpoints specified by [DAP] on a
 port (which MAY be the same port 8080 as used to serve the interoperation test
 API) at some relative path. The container should run indefinitely, and the test
 runner will terminate the container on completion of the test case. (While DAP
@@ -188,21 +187,21 @@ attributes (new keys will be added as new query types are defined).
 ### `/internal/test/ready` {#client-ready}
 
 The test runner will POST an empty object (i.e. `{}`) to this endpoint to check
-if the client container is ready to serve requests. If it is ready, it MUST
+if the Client container is ready to serve requests. If it is ready, it MUST
 return a status code of 200 OK.
 
 
 ### `/internal/test/upload` {#upload}
 
-Upon receipt of this command, the client container will construct a DAP
-report with the given configuration and measurement, and submit it. The client
+Upon receipt of this command, the Client container will construct a DAP
+report with the given configuration and measurement, and submit it. The Client
 container will send its response to the test runner once report submission has
 either succeeded or permanently failed.
 
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
-|`leader`|The leader's endpoint URL.|
-|`helper`|The helper's endpoint URL.|
+|`leader`|The Leader's endpoint URL.|
+|`helper`|The Helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
 |`measurement`|If the VDAF's `type` is `"Prio3Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Histogram"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Poplar1"`: an array of Booleans.|
 |`time` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
@@ -210,7 +209,7 @@ either succeeded or permanently failed.
 {: title="Request JSON object structure"}
 
 |Key|Value|
-|`status`|`"success"` if the report was submitted to the leader successfully, or `"error"` otherwise.|
+|`status`|`"success"` if the report was submitted to the Leader successfully, or `"error"` otherwise.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
 {: title="Response JSON object structure"}
 
@@ -220,7 +219,7 @@ either succeeded or permanently failed.
 ### `/internal/test/ready` {#aggregator-ready}
 
 The test runner will POST an empty object (i.e. `{}`) to this endpoint to check
-if the aggregator container is ready to serve requests. If it is ready, it MUST
+if the Aggregator container is ready to serve requests. If it is ready, it MUST
 return a status code of 200 OK.
 
 
@@ -228,53 +227,53 @@ return a status code of 200 OK.
 
 Request the base URL for DAP endpoints for a new task. This API will be invoked
 immediately before `/internal/test/add_task` (see {{aggregator-add-task}}), to
-determine the endpoint URLs of the aggregators. If the aggregator uses a common
+determine the endpoint URLs of the Aggregators. If the Aggregator uses a common
 set of DAP endpoints for all tasks, it could always return the same value, such
 as the relative URL `/`. Alternately, implementations may wish to generate new
 endpoints for each task, derive the endpoint based on the `TaskId`, etc.
 
-The test runner will provide the hostname at which the aggregator is externally
-reachable. If the aggregator returns a relative URL, the test runner will
+The test runner will provide the hostname at which the Aggregator is externally
+reachable. If the Aggregator returns a relative URL, the test runner will
 combine it with the hostname into an absolute URL, assuming that the port is
-8080. Otherwise, the aggregator can incorporate the hostname into an absolute
+8080. Otherwise, the Aggregator can incorporate the hostname into an absolute
 URL and return that.
 
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
 |`role`|Either `"leader"` or `"helper"`.|
-|`hostname`|This aggregator's hostname in the interoperation test environment. This may optionally be used in constructing the endpoint URL as an absolute URL.|
+|`hostname`|This Aggregator's hostname in the interoperation test environment. This may optionally be used in constructing the endpoint URL as an absolute URL.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
 |`status`|`"success"` if the endpoint was successfully selected or set up, or `"error"` otherwise.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`endpoint`|A relative or absolute URL, specifying the DAP aggregator endpoint that should be used for this task. If the test runner receives a relative URL, it will transform it into an absolute URL before performing the next phase of task setup.|
+|`endpoint`|A relative or absolute URL, specifying the DAP Aggregator endpoint that should be used for this task. If the test runner receives a relative URL, it will transform it into an absolute URL before performing the next phase of task setup.|
 {: title="Response JSON object structure"}
 
 
 ### `/internal/test/add_task` {#aggregator-add-task}
 
-Register a task with the aggregator, with the given configuration and secrets.
+Register a task with the Aggregator, with the given configuration and secrets.
 
 The HPKE keypair generated for this task should use the mandatory-to-implement
 algorithms in section 6 of [DAP], for broad compatibility.
 
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
-|`leader`|The leader's endpoint URL. The test runner will ensure this is an absolute URL.|
-|`helper`|The helper's endpoint URL. The test runner will ensure this is an absolute URL.|
+|`leader`|The Leader's endpoint URL. The test runner will ensure this is an absolute URL.|
+|`helper`|The Helper's endpoint URL. The test runner will ensure this is an absolute URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`leader_authentication_token`|The authentication token that is shared with the other aggregator, as a string. This string MUST be safe for use as an HTTP header value. When the leader sends HTTP requests to the helper, it MUST include this value in a header named `DAP-Auth-Token`.|
-|`collector_authentication_token` (only present if `role` is `"leader"`)|The authentication token that is shared between the leader and collector, as a string. This string MUST be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it MUST include this value in a header named `DAP-Auth-Token`.|
+|`leader_authentication_token`|The authentication token that is shared with the other Aggregator, as a string. This string MUST be safe for use as an HTTP header value. When the Leader sends HTTP requests to the Helper, it MUST include this value in a header named `DAP-Auth-Token`.|
+|`collector_authentication_token` (only present if `role` is `"leader"`)|The authentication token that is shared between the Leader and Collector, as a string. This string MUST be safe for use as an HTTP header value. When the Collector sends HTTP requests to the Leader, it MUST include this value in a header named `DAP-Auth-Token`.|
 |`role`|Either `"leader"` or `"helper"`.|
-|`vdaf_verify_key`|The VDAF verification key shared by the two aggregators, encoded with base64url.|
+|`vdaf_verify_key`|The VDAF verification key shared by the two Aggregators, encoded with base64url.|
 |`max_batch_query_count`|A number, providing the maximum number of batches any report may be included in, and thus the number of aggregate results it may contribute to.|
 |`query_type`|A number, representing the task's query type, as described in {{query}}.|
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
 |`max_batch_size` (only present if `query_type` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
-|`collector_hpke_config`|The collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
-|`task_expiration`|A number, providing the time when clients are no longer expected to upload to this task. This is represented as a number of seconds since the UNIX epoch.|
+|`collector_hpke_config`|The Collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
+|`task_expiration`|A number, providing the time when Clients are no longer expected to upload to this task. This is represented as a number of seconds since the UNIX epoch.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -288,38 +287,38 @@ algorithms in section 6 of [DAP], for broad compatibility.
 ### `/internal/test/ready` {#collector-ready}
 
 The test runner will POST an empty object (i.e. `{}`) to this endpoint to check
-if the collector container is ready to serve requests. If it is ready, it MUST
+if the Collector container is ready to serve requests. If it is ready, it MUST
 return a status code of 200 OK.
 
 
 ### `/internal/test/add_task` {#collector-add-task}
 
-Register a task with the collector, with the given configuration. Returns the
-collector's HPKE configuration for this task.
+Register a task with the Collector, with the given configuration. Returns the
+Collector's HPKE configuration for this task.
 
 The HPKE keypair generated for this task should use the mandatory-to-implement
 algorithms in section 6 of [DAP], for broad compatibility.
 
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
-|`leader`|The leader's endpoint URL.|
+|`leader`|The Leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
-|`collector_authentication_token`|The authentication token that is shared between the leader and collector, as a string. This string MUST be safe for use as an HTTP header value. When the collector sends HTTP requests to the leader, it MUST include this value in a header named `DAP-Auth-Token`.|
+|`collector_authentication_token`|The authentication token that is shared between the Leader and Collector, as a string. This string MUST be safe for use as an HTTP header value. When the Collector sends HTTP requests to the Leader, it MUST include this value in a header named `DAP-Auth-Token`.|
 |`query_type`|A number, representing the task's query type, as described in {{query}}.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
 |`status`|`"success"` if the task was successfully set up, or `"error"` otherwise. (for example, if the VDAF was not supported)|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`collector_hpke_config` (if successful)|The collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
+|`collector_hpke_config` (if successful)|The Collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
 {: title="Response JSON object structure"}
 
 
 ### `/internal/test/collection_start` {#collection-start}
 
-Send a collection request to the leader with the provided parameters, and return
+Send a collection request to the Leader with the provided parameters, and return
 a handle to the test runner identifying this collection job. The test runner
-will provide this handle to the collector in subsequent
+will provide this handle to the Collector in subsequent
 `/internal/test/collection_poll` requests (see {{collection-poll}}).
 
 |Key|Value|
@@ -331,14 +330,14 @@ will provide this handle to the collector in subsequent
 |Key|Value|
 |`status`|`"success"` if the collection request succeeded, or `"error"` otherwise.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`handle` (if successful)|A handle produced by the collector to refer to this collection job. This must be a string.|
+|`handle` (if successful)|A handle produced by the Collector to refer to this collection job. This must be a string.|
 {: title="Response JSON object structure"}
 
 
 ### `/internal/test/collection_poll` {#collection-poll}
 
-The test runner sends this command to a collector to poll for completion of the
-collection job associated with the provided handle. The collector provides the
+The test runner sends this command to a Collector to poll for completion of the
+collection job associated with the provided handle. The Collector provides the
 status and (if available) results to the test runner.
 
 |Key|Value|
@@ -349,7 +348,7 @@ status and (if available) results to the test runner.
 |`status`|Either `"complete"` if the result is ready, `"in progress"` if the result is not yet ready, or `"error"` if an error occurred.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
 |`batch_id` (if the task uses fixed size queries)|The identifier of the batch that was collected, encoded with base64url.|
-|`report_count` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
+|`report_count` (if complete)|A number, reflecting the count of Client reports included in this aggregated result.|
 |`interval_start` (if complete)|The start of the collection's interval, represented as a number equal to the number of seconds since the UNIX epoch.|
 |`interval_duration` (if complete)|The duration of the collection's interval in seconds, as a number.|
 |`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Count or Prio3Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3CountVec, Prio3Histogram, or Poplar1, this will be an array of strings, each representing an integer in base 10.|
@@ -362,9 +361,9 @@ Test cases could be written to cover the following scenarios.
 
 * Test successful aggregations with each VDAF.
 * Test an aggregation over a few hundred or thousand reports, to exercise the
-  aggregators' division of reports into aggregation jobs.
+  Aggregators' division of reports into aggregation jobs.
 * Test that uploading a report with a time far in the future is rejected.
-* Confirm that leaders and helpers reject requests with respective
+* Confirm that Leaders and Helpers reject requests with respective
   authentication tokens that are incorrect.
 * Test enforcement of `max_batch_query_count` by making overlapping collection
   requests.
@@ -388,7 +387,7 @@ Aggregator URLs will be constructed by the test runner with hostnames that
 resolve to the respective containers within the container network.
 
 Once a future [DAP] draft solves the issue of retries in the aggregate flow, a
-reverse proxy could be introduced in front of each aggregator to inject failures
+reverse proxy could be introduced in front of each Aggregator to inject failures
 when sending requests or responses, to test the protocol's resilience. (It is
 known such a test would fail with the current protocol.)
 
@@ -406,22 +405,22 @@ successful aggregation.
 1. Generate a random `TaskId`, random authentication tokens, and a VDAF
    verification key.
 1. Send a `/internal/test/endpoint_for_task` request ({{endpoint-for-task}}) to
-   the leader.
+   the Leader.
 1. Send a `/internal/test/endpoint_for_task` request ({{endpoint-for-task}}) to
-   the helper.
-1. Construct aggregator URLs using the above responses.
+   the Helper.
+1. Construct Aggregator URLs using the above responses.
 1. Send a `/internal/test/add_task` request ({{collector-add-task}}) to the
-   collector. (the collector generates an HPKE key pair as a side-effect)
+   Collector. (the Collector generates an HPKE key pair as a side-effect)
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
-   leader.
+   Leader.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
-   helper.
-1. Send one or more `/internal/test/upload` requests ({{upload}}) to the client.
+   Helper.
+1. Send one or more `/internal/test/upload` requests ({{upload}}) to the Client.
 1. Send one or more `/internal/test/collection_start` requests
-   ({{collection-start}}) to the collector. (this provides a handle for use in
+   ({{collection-start}}) to the Collector. (this provides a handle for use in
    the next step)
 1. Send `/internal/test/collection_poll` requests ({{collection-poll}}) to the
-   collector, polling until each collection is completed. (the collector will
+   Collector, polling until each collection is completed. (the Collector will
    provide the calculated aggregate results)
 1. Stop containers.
 1. Copy logs out of each container.
