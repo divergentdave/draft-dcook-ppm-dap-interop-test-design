@@ -155,10 +155,10 @@ stored in a nested object, with the following attributes (new `type` values and
 new keys will be added as new VDAFs are defined).
 
 |Key|Value|
-|`type`|One of `"Prio3Aes128Count"`, `"Prio3Aes128CountVec"`, `"Prio3Aes128Sum"`, `"Prio3Aes128Histogram"`, or `"Poplar1Aes128"`|
-|`length` (only present if `type` is `"Prio3Aes128CountVec"`)|The length of the vectors being summed, (encoded in base 10 as a string) used to parameterize the Prio3Aes128CountVec VDAF.|
-|`bits` (only present if `type` is `"Prio3Aes128Sum"` or `"Poplar1Aes128"`)|In the case of Prio3Aes128Sum, the bit width of the integers being summed, encoded in base 10 as a string. In the case of Poplar1Aes128, the bit length of the input, encoded in base 10 as a string.|
-|`buckets` (only present if `type` is `"Prio3Aes128Histogram"`)|An array of histogram bucket boundaries, (encoded in base 10 as strings) used to parameterize the Prio3Aes128Histogram VDAF.|
+|`type`|One of `"Prio3Count"`, `"Prio3CountVec"`, `"Prio3Sum"`, `"Prio3Histogram"`, or `"Poplar1"`|
+|`length` (only present if `type` is `"Prio3CountVec"`)|The length of the vectors being summed, (encoded in base 10 as a string) used to parameterize the Prio3CountVec VDAF.|
+|`bits` (only present if `type` is `"Prio3Sum"` or `"Poplar1"`)|In the case of Prio3Sum, the bit width of the integers being summed, encoded in base 10 as a string. In the case of Poplar1, the bit length of the input, encoded in base 10 as a string.|
+|`buckets` (only present if `type` is `"Prio3Histogram"`)|An array of histogram bucket boundaries, (encoded in base 10 as strings) used to parameterize the Prio3Histogram VDAF.|
 {: title="VDAF JSON object structure" #vdaf-object}
 
 
@@ -204,7 +204,7 @@ either succeeded or permanently failed.
 |`leader`|The leader's endpoint URL.|
 |`helper`|The helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
-|`measurement`|If the VDAF's `type` is `"Prio3Aes128Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Aes128Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Aes128Histogram"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Poplar1Aes128"`: an array of Booleans.|
+|`measurement`|If the VDAF's `type` is `"Prio3Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3CountVec"`: an array of strings, each of which is `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3Histogram"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Poplar1"`: an array of Booleans.|
 |`time` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps.|
 {: title="Request JSON object structure"}
@@ -352,7 +352,7 @@ status and (if available) result to the test runner.
 |`report_count` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|
 |`interval_start` (if complete)|The start of the collection's interval, represented as a number equal to the number of seconds since the UNIX epoch.|
 |`interval_duration` (if complete)|The duration of the collection's interval in seconds, as a number.|
-|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Aes128Count or Prio3Aes128Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Aes128CountVec, Prio3Aes128Histogram, or Poplar1Aes128, this will be an array of strings, each representing an integer in base 10.|
+|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Count or Prio3Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3CountVec, Prio3Histogram, or Poplar1, this will be an array of strings, each representing an integer in base 10.|
 {: title="Response JSON object structure"}
 
 
