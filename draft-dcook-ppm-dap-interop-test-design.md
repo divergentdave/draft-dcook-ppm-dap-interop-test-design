@@ -154,10 +154,9 @@ stored in a nested object, with the following attributes (new `type` values and
 new keys will be added as new VDAFs are defined).
 
 |Key|Value|
-|`type`|One of `"Prio3Count"`, `"Prio3CountVec"`, `"Prio3Sum"`, `"Prio3SumVec"`, `"Prio3Histogram"`, or `"Poplar1"`|
-|`length` (only present if `type` is `"Prio3CountVec"` or `"Prio3SumVec"`)|The length of the vectors being summed, encoded in base 10 as a string.|
+|`type`|One of `"Prio3Count"`, `"Prio3CountVec"`, `"Prio3Histogram"`, `"Prio3Sum"`, `"Prio3SumVec"`, or `"Poplar1"`|
+|`length` (only present if `type` is `"Prio3CountVec"`, `"Prio3Histogram"`, or `"Prio3SumVec"`)|The length of the vectors being summed, encoded in base 10 as a string.|
 |`bits` (only present if `type` is `"Prio3Sum"`, `"Prio3SumVec"`, or `"Poplar1"`)|In the case of Prio3Sum or Prio3SumVec, the bit width of the integers being summed, encoded in base 10 as a string. In the case of Poplar1, the bit length of the input, encoded in base 10 as a string.|
-|`buckets` (only present if `type` is `"Prio3Histogram"`)|An array of histogram bucket boundaries, encoded in base 10 as strings.|
 {: title="VDAF JSON object structure" #vdaf-object}
 
 
