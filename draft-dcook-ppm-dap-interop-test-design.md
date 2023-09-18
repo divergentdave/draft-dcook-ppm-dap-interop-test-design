@@ -156,6 +156,7 @@ new keys will be added as new VDAFs are defined).
 |Key|Value|
 |`type`|One of `"Prio3Count"`, `"Prio3Histogram"`, `"Prio3Sum"`, `"Prio3SumVec"`, or `"Poplar1"`|
 |`length` (only present if `type` is `"Prio3Histogram"` or `"Prio3SumVec"`)|The length of the vectors being summed, encoded in base 10 as a string.|
+|`chunk_length` (only present if `type` is `"Prio3Histogram"` or `"Prio3SumVec"`)|This parameter is required by the parallel sum circuit optimization used in these VDAFs. It is a positive number encoded in base 10 as a string.|
 |`bits` (only present if `type` is `"Prio3Sum"`, `"Prio3SumVec"`, or `"Poplar1"`)|In the case of Prio3Sum or Prio3SumVec, the bit width of the integers being summed, encoded in base 10 as a string. In the case of Poplar1, the bit length of the input, encoded in base 10 as a string.|
 {: title="VDAF JSON object structure" #vdaf-object}
 
