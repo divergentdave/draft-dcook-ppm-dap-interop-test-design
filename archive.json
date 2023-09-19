@@ -1,0 +1,1602 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2023-04-09T01:10:43.799103+00:00",
+  "repo": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOHnogs85Pqe_g",
+      "title": "Is a TCP-only readiness check too restrictive?",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/1",
+      "state": "CLOSED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "@tgeoghegan [pointed out that](https://github.com/divviup/janus/pull/375#discussion_r943796123) polling for port 8080 to respond to a TCP handshake may be insufficient. Currently, the text says:\r\n\r\n> It is the responsibility of the test runner to wait for all containers to start up and listen on their ports before sending any commands.\r\n\r\nWe could address this in a few ways:\r\n\r\n1. Make explicit the requirement that interop containers must be ready to respond to requests when they bind port 8080. This could prove onerous, particularly for aggregator containers, if the DAP implementation they are built on doesn't share this property.\r\n2. Do polling and retries on HTTP requests instead, to `/internal/test/upload`, `/internal/test/endpoint_for_task`, and `/internal/test/add_task` respectively.\r\n3. Introduce a new health check/readiness endpoint to the test API for all three roles, and check that instead.",
+      "createdAt": "2022-08-11T21:56:42Z",
+      "updatedAt": "2022-08-29T19:24:27Z",
+      "closedAt": "2022-08-29T19:24:27Z",
+      "comments": []
+    },
+    {
+      "number": 2,
+      "id": "I_kwDOHnogs85Pqm7Q",
+      "title": "Consider encoding large integers as strings instead of numbers",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/2",
+      "state": "CLOSED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Certain VDAFs work with 128-bit integers. Currently, measurements and aggregate results for these VDAFs are transmitted as JSON numbers. This introduces artificial limitations on ranges of inputs and outputs when writing tests. The measurements and results could instead be encoded as strings, to avoid a loss of precision or errors with large values.",
+      "createdAt": "2022-08-11T22:46:18Z",
+      "updatedAt": "2022-08-29T19:24:49Z",
+      "closedAt": "2022-08-29T19:24:48Z",
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "While times and durations in seconds are represented as 64-bit integers in DAP, JSON numbers will still be sufficient to represent them, as their practical ranges will be well within `Number.MAX_SAFE_INTEGER`.",
+          "createdAt": "2022-08-25T16:51:59Z",
+          "updatedAt": "2022-08-25T16:51:59Z"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "I_kwDOHnogs85SUcRy",
+      "title": "Changes for DAP draft-02",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/7",
+      "state": "CLOSED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "- [x] Update document reference. (#13)\r\n- [x] Change /internal/test/collect_start to permit fixed size batches. This will require some additional communication with the leader, as the protocol does not yet provide a way to determine batch identifiers. (#13)\r\n- [x] Add report count to /internal/test/collect_poll response. (#9)\r\n- [ ] DAP-Auth-Token is no longer mandatory, so the corresponding parameters could be optional, only provided in some test cases.\r\n- [x] Rename \"nonceTime\" attribute. (aae1bbd)\r\n- [x] Rename minBatchDuration to timePrecision. (#11)\r\n- [x] Rename maxBatchLifetime to maxBatchQueryCount. (7f3942fc21fd6603b9488538d2fece950a23ad9d)\r\n- [x] Update 'Implementation Status' section. (#24)",
+      "createdAt": "2022-09-21T15:08:42Z",
+      "updatedAt": "2022-10-14T22:54:14Z",
+      "closedAt": "2022-10-14T22:54:14Z",
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "I think it may make sense to leave the authentication token parameters as-is for now. Draft 02 only has performance requirements, and suggests OAuth 2 and mTLS as possible approaches. This document would benefit from waiting and seeing what client authentication methods are commonly used by implementations, and then updating based on that.",
+          "createdAt": "2022-10-10T20:11:02Z",
+          "updatedAt": "2022-10-10T20:11:02Z"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "id": "I_kwDOHnogs85Tw8WY",
+      "title": "Review: Chris P.: s.2: Containers",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/14",
+      "state": "OPEN",
+      "author": "cjpatton",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "I'm wondering if/how describing test endpoints in terms of \"containers\" is useful. Was this an intentional choice?\r\n\r\nI ask because this strikes me more as an implementation detail than a hard requirement. Rather than prescribe a particular implementation strategy, It seems to me like the main goal of this draft to define the endpoints required for opting into what is, in essence a protocol.\r\n\r\nAs a practical matter, Daphne may end up being deployed on a live endpoint, for the purposes of implementing this draft; but it will not run in a traditional \"container\".",
+      "createdAt": "2022-10-11T23:15:14Z",
+      "updatedAt": "2022-10-14T00:26:29Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "The document uses the assumption of containers in two ways, first, in the convention of storing logs in the `/logs` directory, and secondly, to simplify test teardown by relying on stopping and deleting containers. (for example, there's no `/internal/test/delete_task` because of this)\r\n\r\nAdditionally, container-based testing enables permissionless use of tests by closed source/stealth mode DAP implementations. (assuming that the live endpoint would require some authentication) There's also [an idea](https://divergentdave.github.io/draft-dcook-ppm-dap-interop-test-design/draft-dcook-ppm-dap-interop-test-design.html#section-4.6-4) in the document about simulating communication errors -- setting up reverse proxies to do that with live endpoints could be more work than with the all-containers case. ",
+          "createdAt": "2022-10-14T00:03:32Z",
+          "updatedAt": "2022-10-14T00:03:32Z"
+        },
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "Splitting the HTTP protocol and container interface bits apart more might make sense, to allow for reuse. If so, the Security Considerations section will have to get beefed up from its current single sentence.",
+          "createdAt": "2022-10-14T00:10:03Z",
+          "updatedAt": "2022-10-14T00:10:03Z"
+        },
+        {
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "body": "No no, the rationale makes sense. Though I think \"container\" is most useful as an abstraction and not necessarily referring to, say, docker. I would focus on prescribing the expected behavior of a \"container\" and not assume the reader will infer it. (To be clear, I have not yet done a thorough pass -- perhaps you do this already!)",
+          "createdAt": "2022-10-14T00:26:29Z",
+          "updatedAt": "2022-10-14T00:26:29Z"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "id": "I_kwDOHnogs85Tw9A0",
+      "title": "Review: Chris P.: nits",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/15",
+      "state": "CLOSED",
+      "author": "cjpatton",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "- [ ] The reference to the DAP draft is \"DAP-PPM\", but elsewhere (cf. VDAF draft) we're using simply \"DAP\". We should align the reference we use. Do you have strong preference for DAP-PPM?\r\n- [ ] The markdown for most I-Ds I've seen wrap lines at 80 characters. This is totally up to you, of course! One reason to do this is that it makes reviewing PRs easier.",
+      "createdAt": "2022-10-11T23:19:09Z",
+      "updatedAt": "2022-10-25T15:30:38Z",
+      "closedAt": "2022-10-25T15:30:38Z",
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "I don't have a strong preference for DAP or DAP-PPM, I used DAP-PPM initially because it was in the `abbrev` key of the metadata.\r\n\r\nI'll wrap lines once I close out my outstanding PRs.",
+          "createdAt": "2022-10-12T14:21:12Z",
+          "updatedAt": "2022-10-12T14:21:12Z"
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "id": "I_kwDOHnogs85Tw96_",
+      "title": "Review: Chris P.: Add normative reference to VDAF spec",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/16",
+      "state": "CLOSED",
+      "author": "cjpatton",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "It would be a good idea to add a reference like {{!VDAF=draft-irtf-cfrg-vdaf-03}} on first use of the VDAF acronym.",
+      "createdAt": "2022-10-11T23:24:31Z",
+      "updatedAt": "2022-10-17T14:26:52Z",
+      "closedAt": "2022-10-17T14:26:52Z",
+      "comments": []
+    },
+    {
+      "number": 17,
+      "id": "I_kwDOHnogs85TxH7-",
+      "title": "Review: Chris P.: s.4.3.2: Consider de-coupling bearer tokens from task config",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/17",
+      "state": "CLOSED",
+      "author": "cjpatton",
+      "authorAssociation": "NONE",
+      "assignees": [
+        "divergentdave"
+      ],
+      "labels": [],
+      "body": "The /internal/test/add_task endpoint calls for a task config with bearer tokens for the leader and, optionally, the collector. Based on https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/7#issuecomment-1273764033, my impression is that the intention is to continue this in the next draft.\r\n\r\nI'm fine sticking with bearer tokens, but ultimately I think that implementations of DAP will want to decouple HTTP client auth from the specific task. Towards this goal, I think it would be sensible to de-couple this in the interop draft by specifying separate endpoints for configuring these tokens per-task. For example:\r\n\r\nPOST /internal/test/set_leader_bearer_token_for_task?task_id=<task_id>\r\nPOST /internal/test/set_collector_bearer_token_for_task?task_id=<task_id>",
+      "createdAt": "2022-10-12T00:33:47Z",
+      "updatedAt": "2022-10-17T21:27:34Z",
+      "closedAt": "2022-10-17T21:27:34Z",
+      "comments": [
+        {
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "body": "I'm working this out in Daphne, here's what I would suggest:\r\n\r\n```\r\nPOST /internal/test/add_authentication_token\r\n```\r\n\r\nSchema:\r\n```\r\n{\r\n   \"task_id\": <bae64url string>\r\n    \"role\": <either \"leader\" or \"collector\">\r\n    \"token\": <string>\r\n}\r\n```",
+          "createdAt": "2022-10-12T21:47:35Z",
+          "updatedAt": "2022-10-12T21:47:35Z"
+        },
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "I like this idea, I think it makes sense to split the tokens out of `/internal/test/add_task`, as they are no longer part of DAP's conception of task parameters. A separate API for auth tokens also invites configuring future authentication means with their own test APIs, which I think would be easier than continuing to add attributes to the different `add_task` requests. If we want tests to exercise rotation of authentication material down the road, having their configuration split out from immutable task parameters will be helpful.\r\n\r\nThis leaves the open question of how tasks with zero authentication tokens configured should behave. For now, I'm thinking of leaving the aggregator/collector behavior unspecified (so they can either fail open or fail closed) and requiring that the test runner always provide at least one token before otherwise using a task. This keeps things simple for implementations, and is sufficient to enable happy-path tests. We can revisit this in the future if it needs to be more sophisticated.",
+          "createdAt": "2022-10-14T19:03:09Z",
+          "updatedAt": "2022-10-14T19:03:09Z"
+        },
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "Done in #23.",
+          "createdAt": "2022-10-17T21:27:34Z",
+          "updatedAt": "2022-10-17T21:27:34Z"
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "id": "I_kwDOHnogs85T2rfb",
+      "title": "Review: ChrisP.: s.4.3.2: Why pass \"aggregatorId\" with task config?",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/19",
+      "state": "CLOSED",
+      "author": "cjpatton",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Presumably the server is configured to be either the helper or leader but not both.",
+      "createdAt": "2022-10-12T21:43:42Z",
+      "updatedAt": "2022-10-25T15:30:47Z",
+      "closedAt": "2022-10-25T15:30:47Z",
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "The intent of this parameter is to allow dropping a single aggregator implementation into either role, if it supports both. See [section 3](https://divergentdave.github.io/draft-dcook-ppm-dap-interop-test-design/draft-dcook-ppm-dap-interop-test-design.html#section-3-1):\r\n\r\n> Implementations may want to submit a single aggregator image in both the leader list and helper list.\r\n\r\nHaving this parameter means we can configure such aggregators at run time, at the same time we supply the rest of the task parameters.",
+          "createdAt": "2022-10-13T23:30:49Z",
+          "updatedAt": "2022-10-13T23:30:49Z"
+        },
+        {
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "body": "Ohh, that makes a lot of sense. Good idea.\r\n\r\nHow about instead of\r\n\r\n>  0 if this aggregator is the leader, or 1 if this aggregator is the helper.\r\n\r\nwe align the ID with `enum Role` in the DAP spec?\r\n\r\n",
+          "createdAt": "2022-10-14T00:23:42Z",
+          "updatedAt": "2022-10-14T00:23:42Z"
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "id": "I_kwDOHnogs85UkjZx",
+      "title": "Reconsider API design for authentication",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/28",
+      "state": "CLOSED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "In the discussion on https://github.com/divviup/janus/pull/654#discussion_r1001991053, we're considering eliminating `/internal/test/add_authentication_token` API, and folding authentication-related information into a sub-object in the `/internal/test/add_task` request.\r\n\r\nThis would go in the opposite direction as #17. Would it be acceptable to keep the authentication parameters rolled in with task configuration for the time being, and revisit decoupling authentication in future versions once things have matured further? Chris, would this pose any implementation issues with Daphne?\r\n\r\ncc @branlwyd @cjpatton",
+      "createdAt": "2022-10-21T21:16:59Z",
+      "updatedAt": "2022-10-25T15:30:11Z",
+      "closedAt": "2022-10-25T15:30:11Z",
+      "comments": [
+        {
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "body": "This is very doable. Go ahead and stick the auth tokesn back into the add task endpoint. \ud83d\udea2 ",
+          "createdAt": "2022-10-24T17:16:35Z",
+          "updatedAt": "2022-10-24T17:16:35Z"
+        },
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "I opened #29 for this",
+          "createdAt": "2022-10-24T18:05:14Z",
+          "updatedAt": "2022-10-24T18:05:14Z"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "id": "I_kwDOHnogs85VFp3f",
+      "title": "Consider changing \"verify_key\" to \"vdaf_verify_key\"",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/30",
+      "state": "CLOSED",
+      "author": "cjpatton",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "That way its usage is unambiguous.",
+      "createdAt": "2022-10-28T17:14:17Z",
+      "updatedAt": "2022-12-23T17:48:52Z",
+      "closedAt": "2022-12-23T17:48:52Z",
+      "comments": []
+    },
+    {
+      "number": 31,
+      "id": "I_kwDOHnogs85VhRs4",
+      "title": "Current-batch query",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/31",
+      "state": "CLOSED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "DAP-03 is going to include a new query sub-type, so the query JSON object will need to change to accommodate this.",
+      "createdAt": "2022-11-03T14:47:18Z",
+      "updatedAt": "2022-12-23T17:48:41Z",
+      "closedAt": "2022-12-23T17:48:41Z",
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "I think the `/internal/test/fetch_batch_ids` API should be removed when the document is updated for DAP-03, as it will no longer be necessary.",
+          "createdAt": "2022-11-23T18:23:51Z",
+          "updatedAt": "2022-11-23T18:23:51Z"
+        }
+      ]
+    },
+    {
+      "number": 32,
+      "id": "I_kwDOHnogs85Zr9GT",
+      "title": "Heavy Hitters API",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/32",
+      "state": "CLOSED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "I think Poplar1 is now well-specified enough that the placeholder in section 4.4.5 can be fleshed out.",
+      "createdAt": "2022-12-20T14:54:31Z",
+      "updatedAt": "2023-02-22T19:43:02Z",
+      "closedAt": "2023-02-22T19:43:02Z",
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "Deleted this section instead, these APIs aren't necessary",
+          "createdAt": "2023-02-22T19:43:02Z",
+          "updatedAt": "2023-02-22T19:43:02Z"
+        }
+      ]
+    },
+    {
+      "number": 36,
+      "id": "I_kwDOHnogs85grXKC",
+      "title": "DAP-04",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/36",
+      "state": "CLOSED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Changes needed for draft-ietf-ppm-dap-04:\r\n\r\n- [x] Update document reference.\r\n- [x] Return collection's interval from `/internal/test/collect_poll`.\r\n- [x] Update VDAF names to drop \"Aes128\".\r\n- [x] Terminology: collect -> collection, collect flow -> collection flow.\r\n- [x] Other test considerations: Can now do retries during aggregate flow.\r\n- [x] Update language to reflect that `/hpke_config` now returns multiple HPKE configurations.\r\n- [x] Update DAP URL endpoints, if present, to reflect new resource-oriented API.",
+      "createdAt": "2023-03-13T17:57:11Z",
+      "updatedAt": "2023-04-03T14:40:09Z",
+      "closedAt": "2023-04-03T14:39:30Z",
+      "comments": []
+    },
+    {
+      "number": 37,
+      "id": "I_kwDOHnogs85grgj-",
+      "title": "Prio3Aes128SumVec",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/37",
+      "state": "CLOSED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "While the \"CountVec\" Prio3 type is not currently standardized, the implementation in libprio-rs has been generalized into \"SumVec\". This document should support either \"SumVec\" or both.",
+      "createdAt": "2023-03-13T18:17:49Z",
+      "updatedAt": "2023-04-06T16:14:46Z",
+      "closedAt": "2023-04-06T16:14:46Z",
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 3,
+      "id": "PR_kwDOHnogs849l_sM",
+      "title": "Add readiness checks to each container's API",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/3",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This adds an additional `ready` API endpoint to each container's test API. The test runner will use this to determine when it can continue with a test case, rather than simply waiting for a TCP server to be up.\r\n\r\nFixes #1.\r\n\r\n(cc @tgeoghegan)",
+      "createdAt": "2022-08-22T21:34:06Z",
+      "updatedAt": "2022-08-29T19:24:36Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "0bd80f3539fd21e5e742bb026fe116566ec60121",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/test-endpoints",
+      "headRefOid": "2c81d43794283342236cdf7f224fe641369343a6",
+      "closedAt": "2022-08-29T19:24:26Z",
+      "mergedAt": "2022-08-29T19:24:26Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "5242140cf85410af3b6dd682f8f973b3a6a3f459"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOHnogs8490ZkA",
+      "title": "Use strings for integers with large valid ranges",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/4",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This changes the representation of three fields in the test API, so that larger measurements and aggregate results can be used without being rounded or causing errors. Affected fields will now be strings instead of JSON numbers. This applies to the Prio3Aes128Histogram \"buckets\" parameter, measurements for Prio3Aes128Sum and Prio3Aes128Histogram, and the Prio3Aes128Sum result. I did not make any change to fields for times (nonceTimestamp, minBatchDuration, etc.) or cardinal numbers (such as Prio3Aes128Count and Prio3Aes128Histogram results) because these will not exceed `Number.MAX_SAFE_INTEGER`.\r\n\r\nThis closes #2.",
+      "createdAt": "2022-08-25T19:03:34Z",
+      "updatedAt": "2022-08-29T19:25:05Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "0bd80f3539fd21e5e742bb026fe116566ec60121",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/stringify-large-integers",
+      "headRefOid": "a695c8775f98300f6da48a25928dfd1c6e2acc46",
+      "closedAt": "2022-08-29T19:24:48Z",
+      "mergedAt": "2022-08-29T19:24:48Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "eb0f1a4bb5c7d987d64e9fa81c8e07b5fd11340a"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOHnogs84-D-Tm",
+      "title": "Allow DAP to be served on a different port from the test API.",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/5",
+      "state": "MERGED",
+      "author": "branlwyd",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-08-30T16:42:48Z",
+      "updatedAt": "2022-08-31T19:40:55Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "42658c5962cc5ffdc88c26305c01317f5f996695",
+      "headRepository": "branlwyd/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "bran/serving-port",
+      "headRefOid": "e4ffd398e96b30512793f094fbe3886bbd58f118",
+      "closedAt": "2022-08-31T16:58:01Z",
+      "mergedAt": "2022-08-31T16:58:01Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "ef1c864446395867d7921dfb5cc4d2e20b54fc43"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85BAiTx",
+          "commit": {
+            "abbreviatedOid": "675d633"
+          },
+          "author": "branlwyd",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-08-30T16:46:41Z",
+          "updatedAt": "2022-08-30T16:46:42Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "Note: I dropped the port from this because I suppose that a container can assume it will be reached on port 8080 by default -- even if the port is exposed to the outside world, from the container's POV it will be serving the test API from port 8080.\r\n\r\nOTOH, the DAP serving port (if different) isn't necessarily mapped to the outside world at all. That's OK as long as the test runner sets up container networking such that all of the containers can talk to each other (in Docker parlance, they'd all part of the same bridge network, I suppose).\r\n\r\nI think the networking configuration isn't called out by this design, but it would make a lot of sense (IMO) to run tests this way -- it allows containers not to have to worry about the Container<->Host port mapping, and improves isolation. WDYT?",
+              "createdAt": "2022-08-30T16:46:42Z",
+              "updatedAt": "2022-08-30T16:47:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85BBkFO",
+          "commit": {
+            "abbreviatedOid": "675d633"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "Thank you for writing this up! Just a few editorial requests:",
+          "createdAt": "2022-08-30T20:31:19Z",
+          "updatedAt": "2022-08-30T20:41:17Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Some editorial changes:\r\n\r\n- Discuss the port before the path, to stick with their hierarchical order\r\n- \"&\" => \"and\"\r\n- `{{test-api}}` will render to \"Section 4\", which wouldn't fit with the rest of the parenthetical. Plus, we've already referenced the section in the paragraph.\r\n\r\n```suggestion\r\nWhen the container\u2019s entry point executable is run, it SHALL start up an HTTP server listening on port 8080. In all cases, the container will serve the endpoints described in {{test-api}} (particularly, the subsection appropriate to its protocol role). In the case of a helper or leader container, it SHALL also serve the endpoints specified by [DAP-PPM] on a port (which MAY be the same port 8080 as used to serve the interoperation test API) at some relative path. The container should run indefinitely, and the test runner will terminate the container on completion of the test case. (While DAP-PPM requires HTTPS connections, only using HTTP between containers simplifies test setup. Putting TLS client/server interop out-of-scope for these tests is acceptable, as it\u2019s not of interest.)\r\n```",
+              "createdAt": "2022-08-30T20:31:19Z",
+              "updatedAt": "2022-08-30T20:41:17Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "Sounds good to me. One of the reasons I included the port originally was as a hedge for future support for reverse proxies/network simulators in front of each container. (probably in yet more containers in the same network) The test runner can instead just parse ports out of URLs and update hosts and ports as needed, both for that case, and for forwarding to the test runner itself on the host via Docker's EXPOSE.",
+              "createdAt": "2022-08-30T20:39:40Z",
+              "updatedAt": "2022-08-30T20:41:17Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOHnogs84-sfoB",
+      "title": "Add support for `Prio3Aes128CountVec`",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/6",
+      "state": "CLOSED",
+      "author": "tgeoghegan",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Allows testing of the `Prio3Aes128CountVec` VDAF. We add it to the common structure for `VDAF`, and amend the definitions of the upload request and collect poll response messages so that the measurement and aggregate result (respectively) are defined generically for VDAFs, and unconditionally encode numbers as strings. The goal here is to allow representing `Prio3Aes128CountVec` measurements, but also to allow this protocol to work with new VDAFs with minimal or no changes.\r\n\r\nWe still explicitly discuss specific VDAFs to define encoding task parameters.",
+      "createdAt": "2022-09-09T17:47:28Z",
+      "updatedAt": "2022-10-03T18:11:07Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "4d6496140d87184181194d9b491257ce928e5439",
+      "headRepository": "tgeoghegan/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "numbers-always-strings",
+      "headRefOid": "ffcfbd1514a23ce6651f177a40d4d85bd374b43d",
+      "closedAt": "2022-10-03T18:11:07Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85BueCy",
+          "commit": {
+            "abbreviatedOid": "ffcfbd1"
+          },
+          "author": "tgeoghegan",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-09-09T17:48:34Z",
+          "updatedAt": "2022-09-09T17:48:35Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "Ideally we could define this without discussing specific VDAFs, but I haven't worked out a way to achieve that.",
+              "createdAt": "2022-09-09T17:48:35Z",
+              "updatedAt": "2022-09-09T17:48:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85BvBUm",
+          "commit": {
+            "abbreviatedOid": "ffcfbd1"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-09-09T20:11:16Z",
+          "updatedAt": "2022-09-09T20:26:58Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "I think that would have to start with VDAF defining a portable means for communicating a VDAF and its parameters.",
+              "createdAt": "2022-09-09T20:11:16Z",
+              "updatedAt": "2022-09-09T20:26:59Z"
+            },
+            {
+              "originalPosition": 6,
+              "body": "Nit: we should explicitly specify that the length is a JSON number. A plain number should be sufficient, since the length is a cardinal number. (same as \"bits\" for Prio3Aes128Sum)",
+              "createdAt": "2022-09-09T20:23:52Z",
+              "updatedAt": "2022-09-09T20:26:58Z"
+            },
+            {
+              "originalPosition": 6,
+              "body": "On the other hand, if we wanted to be more uniform, we could stringify all VDAF parameters.",
+              "createdAt": "2022-09-09T20:26:52Z",
+              "updatedAt": "2022-09-09T20:26:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85BvGCy",
+          "commit": {
+            "abbreviatedOid": "ffcfbd1"
+          },
+          "author": "tgeoghegan",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-09-09T20:33:19Z",
+          "updatedAt": "2022-09-09T20:33:19Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "I think maybe VDAF has to anyway. It implicitly does, because the [test vectors](https://www.ietf.org/archive/id/draft-irtf-cfrg-vdaf-03.html#name-test-vectors) it publishes include ad-hoc encodings of the VDAF parameters. `Prio3Aes128Sum` has `bits: 8` and `Prio3Aes128Histogram` has `buckets: [1, 10, 100]`.",
+              "createdAt": "2022-09-09T20:33:19Z",
+              "updatedAt": "2022-09-09T20:33:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85BvMuN",
+          "commit": {
+            "abbreviatedOid": "ffcfbd1"
+          },
+          "author": "tgeoghegan",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-09-09T20:45:35Z",
+          "updatedAt": "2022-09-09T20:45:35Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I think both these choices are good and I'm willing to do either. As the author of this document, do you have a preference?",
+              "createdAt": "2022-09-09T20:45:35Z",
+              "updatedAt": "2022-09-09T20:45:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85BvjdV",
+          "commit": {
+            "abbreviatedOid": "ffcfbd1"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-09-09T22:57:29Z",
+          "updatedAt": "2022-09-09T22:57:29Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "Let's make all VDAF parameters strings. That will keep things the simplest at the specification level, and we won't have to reason about expected ranges as new VDAFs are introduced.",
+              "createdAt": "2022-09-09T22:57:29Z",
+              "updatedAt": "2022-09-09T22:57:29Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOHnogs84_Xh6R",
+      "title": "Encode all VDAF-related numbers as strings",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/8",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This changes all integers in VDAF parameters, measurements, or aggregate results to be encoded in requests and responses as strings. This simplifies future changes, while avoiding JSON number range incompatibilities. See discussion on #6.\r\n\r\ncc @tgeoghegan",
+      "createdAt": "2022-09-21T17:11:58Z",
+      "updatedAt": "2022-09-22T15:02:16Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "4d6496140d87184181194d9b491257ce928e5439",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/strings-for-vdaf",
+      "headRefOid": "2ce25a6e00df8d4fd628dbeaad889a2621ea8f7c",
+      "closedAt": "2022-09-22T15:02:11Z",
+      "mergedAt": "2022-09-22T15:02:11Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "9548aab5fd9310d6705bd5332d92c7d193160b49"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOHnogs84_-TG8",
+      "title": "DAP-02: add report count to `collect_poll` response.",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/9",
+      "state": "MERGED",
+      "author": "branlwyd",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "With DAP-02, the report count is included in the CollectResp. I think this should be exposed to the test API as well, since tests will plausibly want to check that the report count is correct (or even use it to compute the expected final result).\r\n\r\nSee also https://github.com/divviup/janus/pull/592.",
+      "createdAt": "2022-09-30T22:42:11Z",
+      "updatedAt": "2022-10-03T16:43:51Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "9548aab5fd9310d6705bd5332d92c7d193160b49",
+      "headRepository": "branlwyd/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "bran/report-count",
+      "headRefOid": "64f49ba3a290c073b65032834830c46513ea798e",
+      "closedAt": "2022-10-03T16:43:51Z",
+      "mergedAt": "2022-10-03T16:43:51Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "5bda81e92d6d6c28d9c0cd7c8575bb585e37dbe9"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85DMvfV",
+          "commit": {
+            "abbreviatedOid": "0e68ef8"
+          },
+          "author": "branlwyd",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-09-30T22:43:13Z",
+          "updatedAt": "2022-09-30T22:43:14Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "I thought about representing this as a string, but I suspect no test case will ever include nearly enough reports to exhaust the size of a JSON number.",
+              "createdAt": "2022-09-30T22:43:13Z",
+              "updatedAt": "2022-09-30T22:43:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85DRdS4",
+          "commit": {
+            "abbreviatedOid": "0e68ef8"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-10-03T16:00:12Z",
+          "updatedAt": "2022-10-03T16:00:12Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOHnogs85DRgCK",
+          "commit": {
+            "abbreviatedOid": "0e68ef8"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-10-03T16:07:57Z",
+          "updatedAt": "2022-10-03T16:07:57Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "I agree on using a number over a string.\r\n\r\nThe attribute's name should be in camel case for consistency.\r\n\r\n```suggestion\r\n|`reportCount` (if complete)|A number, reflecting the count of client reports included in this aggregated result.|\r\n```",
+              "createdAt": "2022-10-03T16:07:57Z",
+              "updatedAt": "2022-10-03T16:07:57Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "id": "PR_kwDOHnogs85AE4Uf",
+      "title": "Add Prio3Aes128CountVec",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/10",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Based on #6",
+      "createdAt": "2022-10-03T18:09:28Z",
+      "updatedAt": "2022-10-03T18:10:57Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "5bda81e92d6d6c28d9c0cd7c8575bb585e37dbe9",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/countvec",
+      "headRefOid": "5fdb3225f8c8d11ac859d00ddab9e28aa9d4cf79",
+      "closedAt": "2022-10-03T18:10:54Z",
+      "mergedAt": "2022-10-03T18:10:54Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "771a5d1ac1315d2e8a3fc4ab044642ed1df9956d"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDOHnogs85AhHbo",
+      "title": "DAP draft 02: min_batch_duration => time_precision",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/11",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Part of #7.",
+      "createdAt": "2022-10-10T19:23:40Z",
+      "updatedAt": "2022-10-10T19:25:02Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "aae1bbdde3b01530af97851ba09dec1fdaf0d2be",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/time-precision",
+      "headRefOid": "9c4d0b511f3dcb6a195fe55035ffe00008683b32",
+      "closedAt": "2022-10-10T19:24:59Z",
+      "mergedAt": "2022-10-10T19:24:59Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "f780016f34588b7c83aa3f01c1dcc388709fe4ff"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 12,
+      "id": "PR_kwDOHnogs85AhVzN",
+      "title": "Be explicit regarding DAP-Auth-Token header",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/12",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "DAP draft-02 no longer specifies any HTTP client request authentication mechanism. To fill this gap for now, this change states directly that authentication tokens should be sent in the `DAP-Auth-Token` HTTP header. I think it would be easier for implementations to continue to use this draft-01 authentication behavior than anything else we could specify here. Even if we were to say that implementations should do nothing for authentication, and unconditionally treat incoming requests as authenticated, that would be a test-only behavior. Support for other authentication mechanisms, such as OAuth 2 and mTLS, as suggested, should wait until other methods get some adoption in DAP implementations.",
+      "createdAt": "2022-10-10T20:30:28Z",
+      "updatedAt": "2022-10-10T21:01:00Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "f780016f34588b7c83aa3f01c1dcc388709fe4ff",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/explicit-dap-auth-token",
+      "headRefOid": "a4067ae2f21e653ce2f8b635cd46894a53a3c1d3",
+      "closedAt": "2022-10-10T21:00:53Z",
+      "mergedAt": "2022-10-10T21:00:53Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "17898c4c5815d53999d6ddbdfa5ef09db9b63e21"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 13,
+      "id": "PR_kwDOHnogs85AmCfO",
+      "title": "Add support for fixed size queries",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/13",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This adds query information to test API requests, and adds a new test API to fetch fixed size query batch IDs from the leader out of band. Part of #7.\n\nThe new `fetch_batch_ids` API returns all batch IDs that the leader has generated for a task. This takes advantage of the fact that it will only be used in short-lived tests, and thus it doesn't need to scale to support many batches. As a result, the API idempotent, and we can dodge the concerns that arose around current_batch/next_batch.",
+      "createdAt": "2022-10-11T18:53:30Z",
+      "updatedAt": "2022-10-14T15:47:14Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "7f3942fc21fd6603b9488538d2fece950a23ad9d",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/fixed-size-query",
+      "headRefOid": "c1121e465124b92235eb08be1a8f6da1070d0881",
+      "closedAt": "2022-10-14T15:47:10Z",
+      "mergedAt": "2022-10-14T15:47:10Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "2067bc785f7df36f7b17f2d0e9df79dbf22ee767"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 18,
+      "id": "PR_kwDOHnogs85Ap_B5",
+      "title": "Change attributes from camel case to snake case",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/18",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This renames all attributes in test API requests and responses to use snake case. This should be easier to work with, as it more directly matches data structure definitions in DAP. There is plenty of precedent for using snake case attribute names in JSON, for example, in [qlog](https://quicwg.org/qlog/draft-ietf-quic-qlog-main-schema.html).\r\n\r\nRight now would be the best time to make a big breaking change such as this, as it could roll out with other breaking changes made to support DAP draft-02.",
+      "createdAt": "2022-10-12T14:00:54Z",
+      "updatedAt": "2022-10-14T15:54:50Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "2067bc785f7df36f7b17f2d0e9df79dbf22ee767",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/underscores",
+      "headRefOid": "2cdd6dcda5e33de0f422b1880e9f0619d84a32a4",
+      "closedAt": "2022-10-14T15:54:44Z",
+      "mergedAt": "2022-10-14T15:54:44Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "99a3b19b6f278833ee2e4ba27e67eedaaadd5d8b"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 20,
+      "id": "PR_kwDOHnogs85A1Fep",
+      "title": "Wrap paragraphs at 80 characters",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/20",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This wraps most of the Markdown file at 80 characters, save for the tables (where newlines are semantically meaningful, indicating new rows) and the YAML metadata. This addresses part of #15.",
+      "createdAt": "2022-10-14T16:25:56Z",
+      "updatedAt": "2022-10-14T16:29:34Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "99a3b19b6f278833ee2e4ba27e67eedaaadd5d8b",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/wrap-text",
+      "headRefOid": "36dff1a94cffcd6ad15224d95d0ed894758bbf97",
+      "closedAt": "2022-10-14T16:29:32Z",
+      "mergedAt": "2022-10-14T16:29:32Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "51dd4e5db907e36b843350b84d9269e0b5051e4e"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 21,
+      "id": "PR_kwDOHnogs85A1Ig6",
+      "title": "Replace DAP-PPM with DAP",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/21",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "\"DAP\" seems to be more colloquially common than \"DAP-PPM\", even though the latter may be the I-D's officially listed abbreviation.\r\n\r\nThis addresses part of #15.",
+      "createdAt": "2022-10-14T16:39:54Z",
+      "updatedAt": "2022-10-14T16:51:01Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "51dd4e5db907e36b843350b84d9269e0b5051e4e",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/dap-abbrev",
+      "headRefOid": "55a21cb30e9f4813f1cf0aacd4e634381974efd5",
+      "closedAt": "2022-10-14T16:50:58Z",
+      "mergedAt": "2022-10-14T16:50:58Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "2938ae38d71ccae2e114052eb1564eef4b2a5ddb"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85EHGJn",
+          "commit": {
+            "abbreviatedOid": "55a21cb"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-10-14T16:41:29Z",
+          "updatedAt": "2022-10-14T16:41:29Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "id": "PR_kwDOHnogs85A1MOJ",
+      "title": "Replace aggregator_id with role",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/22",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This replaces `aggregator_id` attributes with `role` attributes. These now use values from the `Role` enum in DAP, rather than the aggregator_id parameter that VDAF interfaces expect.\r\n\r\nBased on discussion in #19.",
+      "createdAt": "2022-10-14T16:57:56Z",
+      "updatedAt": "2022-10-14T17:38:51Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "2938ae38d71ccae2e114052eb1564eef4b2a5ddb",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/match-role-enum",
+      "headRefOid": "dd6953451ee253ef0d8f7be4184eb5d7cc84c8ac",
+      "closedAt": "2022-10-14T17:38:47Z",
+      "mergedAt": "2022-10-14T17:38:47Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "34ead7fcd87e995a01ce65d96abdf3776ac842e7"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 23,
+      "id": "PR_kwDOHnogs85A2GgK",
+      "title": "Split authentication tokens out into separate APIs",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/23",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This removes the authentication tokens from the respective `/internal/test/add_task` APIs, and provisions them separately. This change will better position the document for future request authentication methods, and separate authentication credentials, which may need to rotate in the future, from immutable DAP task parameters.\r\n\r\nThis addresses #17, see also the discussion on #7. cc @cjpatton",
+      "createdAt": "2022-10-14T21:34:15Z",
+      "updatedAt": "2022-10-17T21:26:51Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "34ead7fcd87e995a01ce65d96abdf3776ac842e7",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/add-authentication-token",
+      "headRefOid": "69921f65372f48af0657f588e98356814296051b",
+      "closedAt": "2022-10-17T21:26:47Z",
+      "mergedAt": "2022-10-17T21:26:47Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "403e90739e617f5a810cbc36a5265e23855ebcf1"
+      },
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "Yeah, I'm just using these tokens as a common denominator for now. Once `DAP-Auth-Token` from DAP-01 is further in the rearview mirror, I'll have to reassess. Unauthorized requests may be a good common denominator in the future, but I didn't want to impose a requirement to support unauthorized requests just yet.",
+          "createdAt": "2022-10-14T23:49:06Z",
+          "updatedAt": "2022-10-14T23:49:06Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85EIflH",
+          "commit": {
+            "abbreviatedOid": "69921f6"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "Change looks good. One high-level question: Do we ultimately intend to REQUIRE bearer tokens for interop tests? I can imagine we'll end up with a bunch of deployment-specific client auth methods. We certainly don't need the interop test runner to exercise all of these, but it's definitely useful to exercise the basic \"unauthorized request\" code path. I guess bearer tokens is fine as a \"common denominator\" for all implementations?",
+          "createdAt": "2022-10-14T22:33:36Z",
+          "updatedAt": "2022-10-14T22:40:39Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "Just for my own edification: what's an example of a string that's not a safe HTTP header value?",
+              "createdAt": "2022-10-14T22:33:36Z",
+              "updatedAt": "2022-10-14T22:40:39Z"
+            },
+            {
+              "originalPosition": 76,
+              "body": "What's the rationale for adding this field here, since its value will never be anything but \"collector\"?",
+              "createdAt": "2022-10-14T22:34:57Z",
+              "updatedAt": "2022-10-14T22:40:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85EIkzM",
+          "commit": {
+            "abbreviatedOid": "69921f6"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-10-14T23:30:27Z",
+          "updatedAt": "2022-10-14T23:30:27Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "Low ASCII bytes or non-ASCII bytes are not allowed, so it has to be all 0x20-0x7F.",
+              "createdAt": "2022-10-14T23:30:27Z",
+              "updatedAt": "2022-10-14T23:30:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85EIlEe",
+          "commit": {
+            "abbreviatedOid": "69921f6"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-10-14T23:34:11Z",
+          "updatedAt": "2022-10-14T23:34:11Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "This keeps the request the same shape as those sent to the aggregator, for simplicity and code reuse. I'm also considering hoisting both these and `/internal/test/ready` into a non-role-specific section, to cut down on redundancy.",
+              "createdAt": "2022-10-14T23:34:11Z",
+              "updatedAt": "2022-10-14T23:34:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85EIlNS",
+          "commit": {
+            "abbreviatedOid": "69921f6"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-10-14T23:36:23Z",
+          "updatedAt": "2022-10-14T23:36:24Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "Makes sense. We might also consider replacing the aggregatorId (0 or 1) in the add task endpoint with role (\"leader\" or \"helper').",
+              "createdAt": "2022-10-14T23:36:23Z",
+              "updatedAt": "2022-10-14T23:36:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85EPLwr",
+          "commit": {
+            "abbreviatedOid": "69921f6"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-10-17T21:26:38Z",
+          "updatedAt": "2022-10-17T21:26:39Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "I'll draft up a separate change to make role a string.",
+              "createdAt": "2022-10-17T21:26:38Z",
+              "updatedAt": "2022-10-17T21:26:39Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "PR_kwDOHnogs85A2IGX",
+      "title": "Update implementation status",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/24",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-10-14T21:44:36Z",
+      "updatedAt": "2022-10-14T22:53:54Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "2e4885c78083af9f4c711195d20cb3207c2dc495",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/implementation-status",
+      "headRefOid": "99b789e54347185a2cdc7e1436efb77970ca3042",
+      "closedAt": "2022-10-14T22:53:51Z",
+      "mergedAt": "2022-10-14T22:53:51Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "8b0431c6944e7a223273cd2ee6c234b9e422e95e"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85EIgYN",
+          "commit": {
+            "abbreviatedOid": "99b789e"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-10-14T22:41:22Z",
+          "updatedAt": "2022-10-14T22:41:22Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOHnogs85EIgbE",
+          "commit": {
+            "abbreviatedOid": "99b789e"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-10-14T22:41:48Z",
+          "updatedAt": "2022-10-14T22:41:48Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "id": "PR_kwDOHnogs85A2QGK",
+      "title": "Add a normative reference to VDAF",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/25",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This fixes #16. I also figured out how to use automatic bibliography information for I-Ds, so I updated the DAP reference to use that as well.",
+      "createdAt": "2022-10-14T22:32:22Z",
+      "updatedAt": "2022-10-17T14:26:58Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "6aeebbf5951f96dcd83dd728a679f5da8ab528e4",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/vdaf-reference",
+      "headRefOid": "2c5c2aea32ad45af981e1d24e46e55c596810fb8",
+      "closedAt": "2022-10-17T14:26:52Z",
+      "mergedAt": "2022-10-17T14:26:52Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "ce0a2469939986aa4f4904c24739c0ecc7ec91a2"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85EIgh0",
+          "commit": {
+            "abbreviatedOid": "2c5c2ae"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-10-14T22:42:52Z",
+          "updatedAt": "2022-10-14T22:42:57Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "If you change this to {{!VDAF}}, then `make` will automatically render the normative reference for you.",
+              "createdAt": "2022-10-14T22:42:52Z",
+              "updatedAt": "2022-10-14T22:42:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85EIh6C",
+          "commit": {
+            "abbreviatedOid": "2c5c2ae"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-10-14T22:56:52Z",
+          "updatedAt": "2022-10-14T22:56:52Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "It's already normative due to its position in the YAML document up top (which also sets up the \"VDAF\" symbol). See [here](https://divergentdave.github.io/draft-dcook-ppm-dap-interop-test-design/david/vdaf-reference/draft-dcook-ppm-dap-interop-test-design.html#name-normative-references) for the output.",
+              "createdAt": "2022-10-14T22:56:52Z",
+              "updatedAt": "2022-10-14T22:56:52Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "id": "PR_kwDOHnogs85A90pf",
+      "title": "Make role attributes strings",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/26",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Rather than have `role` be one of [0, 1] or [2, 3], this makes it a string. This is simpler to work with, and human readability is a higher goal than compactness for the present purposes.",
+      "createdAt": "2022-10-17T21:32:56Z",
+      "updatedAt": "2022-10-17T21:38:08Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "403e90739e617f5a810cbc36a5265e23855ebcf1",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/role-strings",
+      "headRefOid": "09bcaecfccf76e0dab3b3cd0d4bee9721aaf7a45",
+      "closedAt": "2022-10-17T21:38:05Z",
+      "mergedAt": "2022-10-17T21:38:04Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "5d4fd7deecc913b0a7ceec0cf187ebc9db6dd47a"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 27,
+      "id": "PR_kwDOHnogs85BB1M0",
+      "title": "Add task_expiration",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/27",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This adds the task_expiration parameter to the aggregator's add_task request.",
+      "createdAt": "2022-10-18T15:42:39Z",
+      "updatedAt": "2022-10-19T15:00:59Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "5d4fd7deecc913b0a7ceec0cf187ebc9db6dd47a",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/task-expiration",
+      "headRefOid": "6430b749ed3690cb54c6bf12667cb0e891824e32",
+      "closedAt": "2022-10-19T15:00:56Z",
+      "mergedAt": "2022-10-19T15:00:56Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "9ce7e9590228f208ecd833ca817f8b5689b7292a"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 29,
+      "id": "PR_kwDOHnogs85Bb0wq",
+      "title": "Back out add_authentication_token APIs",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/29",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Following #28, this removes the `/internal/test/add_authentication_token` APIs, and adds authentication tokens back to each `/internal/test/add_task` API.",
+      "createdAt": "2022-10-24T18:04:42Z",
+      "updatedAt": "2022-10-25T13:54:12Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "9ce7e9590228f208ecd833ca817f8b5689b7292a",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/remove-add_authentication_token",
+      "headRefOid": "348de4723d9b9bb134a2f0cfbe51ed568d400039",
+      "closedAt": "2022-10-25T13:54:09Z",
+      "mergedAt": "2022-10-25T13:54:09Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "c5ce6a42fe3f5772b60a12e63a2856b8cb2e188b"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85Ex99d",
+          "commit": {
+            "abbreviatedOid": "348de47"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-10-24T23:47:30Z",
+          "updatedAt": "2022-10-24T23:47:30Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "id": "PR_kwDOHnogs85F4EM1",
+      "title": "Update for DAP-03, add current batch support",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/33",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #31. The batch ID is also added as an output from `/internal/test/collect_poll`, which will be useful for current batch collect requests.\r\n\r\ncc @branlwyd",
+      "createdAt": "2022-12-20T15:10:55Z",
+      "updatedAt": "2022-12-23T17:48:44Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "68f62db2dbab53708d81532c8d0b2700d6a554ee",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/update-dap-03",
+      "headRefOid": "5a43779943649962a7be18a303a979d22a866039",
+      "closedAt": "2022-12-23T17:48:40Z",
+      "mergedAt": "2022-12-23T17:48:40Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "e244815dfb52755298cf37f73873637a92862fe7"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 34,
+      "id": "PR_kwDOHnogs85F4E9l",
+      "title": "Rename verify_key to vdaf_verify_key",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/34",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #30.",
+      "createdAt": "2022-12-20T15:13:14Z",
+      "updatedAt": "2022-12-23T17:48:54Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "68f62db2dbab53708d81532c8d0b2700d6a554ee",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/rename-verify-key",
+      "headRefOid": "f4fc353a57c900906f899e3e35fdb214e235b851",
+      "closedAt": "2022-12-23T17:48:51Z",
+      "mergedAt": "2022-12-23T17:48:51Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "60ed2a040a203cb856e8962c4f82fb2627e4d74d"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 35,
+      "id": "PR_kwDOHnogs85Ic9nE",
+      "title": "Add support for Poplar1",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/35",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This makes the following changes to support Poplar1 in the test API.\r\n\r\n- Add Poplar1Aes128 to the list of VDAF types, and specify encoding of its parameter.\r\n- Add encoding of Poplar1 measurements.\r\n- Add encoding of Poplar1 aggregate results.\r\n- ~~Add a separate pair of collector APIs to do an entire end-to-end heavy hitters calculation.~~\r\n\r\ncc @branlwyd @cjpatton @tgeoghegan",
+      "createdAt": "2023-01-24T18:39:12Z",
+      "updatedAt": "2023-02-22T19:42:31Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "60ed2a040a203cb856e8962c4f82fb2627e4d74d",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/poplar1",
+      "headRefOid": "f3ab20ea2971e32eaa7edb8531fb78b14a7cfcfe",
+      "closedAt": "2023-02-22T19:42:27Z",
+      "mergedAt": "2023-02-22T19:42:27Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "2cffab7dea1a4d9ec44ded6c62eb177790333f6a"
+      },
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "I want to take another look at how this handles Poplar1 measurement encoding. I need to confirm whether it's in line with how the VDAF's aggregation parameter encoding is defined, and either match that or back off and use arrays of booleans.",
+          "createdAt": "2023-02-21T23:21:52Z",
+          "updatedAt": "2023-02-21T23:21:52Z"
+        },
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "Taking an example index of 26888, (0b1101001_00001000) with `BITS = 15`, `Poplar1.encode_agg_param()` would serialize the lone candidate prefix 26888 with a call to `I2OSP(26888, 2) = b'\\x69\\x08'`. This PR's current text of \"the input extended to a byte boundary with zero bits\" would instead result in `b'\\xd2\\x10'`. Using `I2OSP()` effectively pads the start with zero bits, not the end.",
+          "createdAt": "2023-02-22T17:31:45Z",
+          "updatedAt": "2023-02-22T17:31:45Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85Lm5BJ",
+          "commit": {
+            "abbreviatedOid": "85c5dca"
+          },
+          "author": "branlwyd",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-01-24T23:35:35Z",
+          "updatedAt": "2023-01-24T23:42:05Z",
+          "comments": [
+            {
+              "originalPosition": 48,
+              "body": "Do the `heavy_hitters_start` & `heavy_hitters_poll` endpoints need to exist separately from the other endpoints, or could they be implemented as part of the test runner via the other endpoints? I think it's the latter; if so, I would recommend removing these endpoints & having the functionality be implemented as part of appropriate test runners in order to keep test API implementations simple.",
+              "createdAt": "2023-01-24T23:35:35Z",
+              "updatedAt": "2023-01-24T23:42:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85N8gtI",
+          "commit": {
+            "abbreviatedOid": "85c5dca"
+          },
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-02-21T15:52:04Z",
+          "updatedAt": "2023-02-21T15:52:05Z",
+          "comments": [
+            {
+              "originalPosition": 48,
+              "body": "I think that's right, heavy hitters doesn't add any protocol complexity beyond providing examples of multiple aggregation parameters. For any collectors that do implement a heavy hitters functionality, they can test it on their own by mocking out responses from the leader; the rest of the DAP protocol run is irrelevant.",
+              "createdAt": "2023-02-21T15:52:05Z",
+              "updatedAt": "2023-02-21T15:52:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHnogs85N9cn6",
+          "commit": {
+            "abbreviatedOid": "113a131"
+          },
+          "author": "branlwyd",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-02-21T18:20:30Z",
+          "updatedAt": "2023-02-21T18:20:30Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 38,
+      "id": "PR_kwDOHnogs85NNeIS",
+      "title": "Updates for DAP-04 parity",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/38",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This updates the document to reflect changes in draft-ietf-ppm-dap-04. Closes #36.\r\n\r\n- Change `/internal/test/collect_start` to `/internal/test/collection_start` and `/internal/test/collect_poll` to `/internal/test/collection_poll`.\r\n- Adds `interval_start` and `interval_duration` to the `/internal/test/collection_poll` response.\r\n- Updates VDAF names to match VDAF draft-05.\r\n- Various editorial changes.",
+      "createdAt": "2023-03-29T22:43:06Z",
+      "updatedAt": "2023-04-03T14:39:34Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "892da1d88e8e773343dfe857081122769fa26421",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/dap-04",
+      "headRefOid": "79d45486e06b12ab8aa23e144410fb79a7c03839",
+      "closedAt": "2023-04-03T14:39:29Z",
+      "mergedAt": "2023-04-03T14:39:29Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "a198d00b7796cf4d3a10055a2dcb18585e7a8416"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85RZE7g",
+          "commit": {
+            "abbreviatedOid": "79d4548"
+          },
+          "author": "tgeoghegan",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-03-30T16:45:06Z",
+          "updatedAt": "2023-03-30T16:45:06Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 39,
+      "id": "PR_kwDOHnogs85Nm3UG",
+      "title": "Add Prio3SumVec",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/39",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This closes #37 by adding support for `Prio3SumVec`.",
+      "createdAt": "2023-04-04T17:38:06Z",
+      "updatedAt": "2023-04-06T16:14:48Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "a198d00b7796cf4d3a10055a2dcb18585e7a8416",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/sumvec",
+      "headRefOid": "8c0bc15835b53e78a4252d8cbd19cc853944de33",
+      "closedAt": "2023-04-06T16:14:45Z",
+      "mergedAt": "2023-04-06T16:14:45Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "0d2d168d19eae2d0e321c85fafac92d39e2ed0cd"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
