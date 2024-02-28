@@ -271,7 +271,7 @@ compatibility.
 |`max_batch_query_count`|A number, providing the maximum number of batches any report may be included in, and thus the number of aggregate results it may contribute to.|
 |`query_type`|A number, representing the task's query type, as described in {{query}}.|
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
-|`max_batch_size` (only present if `query_type` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected.|
+|`max_batch_size` (only present if `query_type` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected, or null, if there is no maximum.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
 |`collector_hpke_config`|The Collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
 |`task_expiration`|A number, providing the time when Clients are no longer expected to upload to this task. This is represented as a number of seconds since the UNIX epoch.|
