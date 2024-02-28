@@ -4,8 +4,8 @@
 
 Privacy Preserving Measurement                                   D. Cook
 Internet-Draft                                                      ISRG
-Intended status: Informational                         19 September 2023
-Expires: 22 March 2024
+Intended status: Informational                          28 February 2024
+Expires: 31 August 2024
 
 
                      DAP Interoperation Test Design
@@ -55,11 +55,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 March 2024.
+   This Internet-Draft will expire on 31 August 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -464,7 +464,8 @@ Table of Contents
     | max_batch_size (only present   | A number, providing the       |
     | if query_type is 2, for fixed  | maximum number of reports     |
     | size queries)                  | that may be in a batch for it |
-    |                                | to be collected.              |
+    |                                | to be collected, or null, if  |
+    |                                | there is no maximum.          |
     +--------------------------------+-------------------------------+
     | time_precision                 | A number, providing the       |
     |                                | precision in seconds of       |
@@ -776,12 +777,12 @@ Table of Contents
 
 8.1.  Normative References
 
-   [DAP]      Geoghegan, T., Patton, C., Rescorla, E., and C. A. Wood,
-              "Distributed Aggregation Protocol for Privacy Preserving
-              Measurement", Work in Progress, Internet-Draft, draft-
-              ietf-ppm-dap-07, 14 September 2023,
+   [DAP]      Geoghegan, T., Patton, C., Pitman, B., Rescorla, E., and
+              C. A. Wood, "Distributed Aggregation Protocol for Privacy
+              Preserving Measurement", Work in Progress, Internet-Draft,
+              draft-ietf-ppm-dap-09, 18 December 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-
-              07>.
+              09>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -802,9 +803,9 @@ Table of Contents
 
    [VDAF]     Barnes, R., Cook, D., Patton, C., and P. Schoppmann,
               "Verifiable Distributed Aggregation Functions", Work in
-              Progress, Internet-Draft, draft-irtf-cfrg-vdaf-07, 31
-              August 2023, <https://datatracker.ietf.org/doc/html/draft-
-              irtf-cfrg-vdaf-07>.
+              Progress, Internet-Draft, draft-irtf-cfrg-vdaf-08, 20
+              November 2023, <https://datatracker.ietf.org/doc/html/
+              draft-irtf-cfrg-vdaf-08>.
 
 8.2.  Informative References
 
