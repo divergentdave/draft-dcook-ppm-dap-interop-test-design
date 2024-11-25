@@ -4,8 +4,8 @@
 
 Privacy Preserving Measurement                                   D. Cook
 Internet-Draft                                                      ISRG
-Intended status: Informational                          28 February 2024
-Expires: 31 August 2024
+Intended status: Informational                          25 November 2024
+Expires: 29 May 2025
 
 
                      DAP Interoperation Test Design
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 August 2024.
+   This Internet-Draft will expire on 29 May 2025.
 
 Copyright Notice
 
