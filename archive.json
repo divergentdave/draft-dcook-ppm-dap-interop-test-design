@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-04-09T01:10:43.799103+00:00",
+  "timestamp": "2024-11-26T01:51:43.571590+00:00",
   "repo": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
   "labels": [
     {
@@ -388,6 +388,83 @@
       "createdAt": "2023-03-13T18:17:49Z",
       "updatedAt": "2023-04-06T16:14:46Z",
       "closedAt": "2023-04-06T16:14:46Z",
+      "comments": []
+    },
+    {
+      "number": 40,
+      "id": "I_kwDOHnogs85rlYtP",
+      "title": "New histogram format in VDAF-06",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/40",
+      "state": "CLOSED",
+      "author": "tholop",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The latest VDAF draft (version 6) modified the format for Prio3Histogram: https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-vdaf-06#name-prio3histogram. To create a new Prio3Histogram we only need to know the number of buckets, and we no longer keep track of a vector of bucket boundaries. Measurements are now the bucket index (e.g. here is Libprio's implementation: https://github.com/divviup/libprio-rs/blob/a52c7d56e05741ae852166fd2cf2c223bc0c732b/src/vdaf/prio3_test.rs#L53).\r\n\r\nThis no longer matches the VDAF structure from the DAP Interop spec: https://datatracker.ietf.org/doc/html/draft-dcook-ppm-dap-interop-test-design-04#name-vdaf-json-object-structure.\r\n\r\n(This issue is copied from https://github.com/wangshan/draft-wang-ppm-dap-taskprov/issues/33, which has the same problem)",
+      "createdAt": "2023-07-14T14:16:42Z",
+      "updatedAt": "2023-08-15T14:26:07Z",
+      "closedAt": "2023-08-15T14:26:07Z",
+      "comments": []
+    },
+    {
+      "number": 43,
+      "id": "I_kwDOHnogs858SJIZ",
+      "title": "`draft-ietf-ppm-dap-09` updates",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/43",
+      "state": "CLOSED",
+      "author": "tgeoghegan",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "We need a draft to catch up with the latest DAP. The measurement type for `Prio3Count` has changed from `u64` to `bool` and this should be reflected in this draft. There may be other changes needed.",
+      "createdAt": "2024-01-16T23:26:11Z",
+      "updatedAt": "2024-01-17T00:25:45Z",
+      "closedAt": "2024-01-17T00:25:45Z",
+      "comments": [
+        {
+          "author": "divergentdave",
+          "authorAssociation": "OWNER",
+          "body": "FWIW, the VDAF specification itself hasn't changed, it still says the measurement type is \"Unsigned, in range [0, 2)\".",
+          "createdAt": "2024-01-16T23:31:06Z",
+          "updatedAt": "2024-01-16T23:31:06Z"
+        },
+        {
+          "author": "branlwyd",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "The measurement type for `Prio3Count` in [VDAF-08](https://www.ietf.org/archive/id/draft-irtf-cfrg-vdaf-08.html#name-prio3count) is still \"Unsigned, in range `[0,2)`\". `libprio-rs` made an implementation choice to represent this as a `bool`; I'm not sure it's appropriate to extend this to the specs, which are likely easier to phrase if all of the `Prio3` constructions use numeric values (though I'll let the VDAF editors weigh in on this).",
+          "createdAt": "2024-01-16T23:32:56Z",
+          "updatedAt": "2024-01-16T23:32:56Z"
+        },
+        {
+          "author": "tgeoghegan",
+          "authorAssociation": "NONE",
+          "body": "Ah, I forgotten or not noticed that libprio-rs disagrees with the specs here. In that case, we should probably do nothing here, since this draft is not specifically for testing libprio-rs.",
+          "createdAt": "2024-01-16T23:54:33Z",
+          "updatedAt": "2024-01-16T23:54:33Z"
+        },
+        {
+          "author": "tgeoghegan",
+          "authorAssociation": "NONE",
+          "body": "Closing since I don't think there's anything to do here.",
+          "createdAt": "2024-01-17T00:25:45Z",
+          "updatedAt": "2024-01-17T00:25:45Z"
+        }
+      ]
+    },
+    {
+      "number": 44,
+      "id": "I_kwDOHnogs85_B5J-",
+      "title": "Taskprov support",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/44",
+      "state": "OPEN",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "It might make sense to add an additional endpoint to set up the out-of-band parameters necessary for the Taskprov extension, such as `verify_key_init`.",
+      "createdAt": "2024-02-13T00:03:02Z",
+      "updatedAt": "2024-02-13T00:03:02Z",
+      "closedAt": null,
       "comments": []
     }
   ],
@@ -1594,6 +1671,132 @@
       "mergedBy": "divergentdave",
       "mergeCommit": {
         "oid": "0d2d168d19eae2d0e321c85fafac92d39e2ed0cd"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 41,
+      "id": "PR_kwDOHnogs85XvqPM",
+      "title": "Update for DAP draft-05",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/41",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This updates document references and changes the parameters for Prio3Histogram.\r\n\r\nCloses #40",
+      "createdAt": "2023-08-11T17:08:00Z",
+      "updatedAt": "2023-08-15T14:26:09Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "0d2d168d19eae2d0e321c85fafac92d39e2ed0cd",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/dap-05",
+      "headRefOid": "266add3b86c7f8de6f376863b3f602969a605463",
+      "closedAt": "2023-08-15T14:26:06Z",
+      "mergedAt": "2023-08-15T14:26:06Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "9eef4f482ea9a15b53d9b04513891c8ddf484214"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 42,
+      "id": "PR_kwDOHnogs85anA9K",
+      "title": "DAP draft-07 updates",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/42",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This updates document references, adds `chunk_length` VDAF parameters, and removes mention of the obsolete, unspecified `Prio3CountVec`.",
+      "createdAt": "2023-09-18T20:28:42Z",
+      "updatedAt": "2023-09-19T14:33:07Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "9eef4f482ea9a15b53d9b04513891c8ddf484214",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "dap-07-updates",
+      "headRefOid": "ff297ce396f671e49ba01c29ce694823c17c5d10",
+      "closedAt": "2023-09-19T14:15:31Z",
+      "mergedAt": "2023-09-19T14:15:31Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "d1be7474941424c1ed3bf2b9b83fde0533d6b53c"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHnogs85hRROx",
+          "commit": {
+            "abbreviatedOid": "ff297ce"
+          },
+          "author": "tgeoghegan",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-09-18T20:30:30Z",
+          "updatedAt": "2023-09-18T20:30:30Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 45,
+      "id": "PR_kwDOHnogs85oNgHk",
+      "title": "Updates for DAP draft-09",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/45",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-02-28T19:30:14Z",
+      "updatedAt": "2024-02-28T20:30:22Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "d1be7474941424c1ed3bf2b9b83fde0533d6b53c",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/dap-draft-09",
+      "headRefOid": "9912aba68cd25be4f07846cbade4b6606cec1651",
+      "closedAt": "2024-02-28T20:30:01Z",
+      "mergedAt": "2024-02-28T20:30:01Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "89a6c726b0371b50bec25f22f7d7e59d5b29813f"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 46,
+      "id": "PR_kwDOHnogs86DG83M",
+      "title": "Update template files",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/46",
+      "state": "MERGED",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-11-25T23:32:41Z",
+      "updatedAt": "2024-11-25T23:37:32Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "89a6c726b0371b50bec25f22f7d7e59d5b29813f",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/update-files",
+      "headRefOid": "abb1e75b51a59350df98ee16beeb7e25b3866df2",
+      "closedAt": "2024-11-25T23:37:28Z",
+      "mergedAt": "2024-11-25T23:37:28Z",
+      "mergedBy": "divergentdave",
+      "mergeCommit": {
+        "oid": "88687869ad056a89356767e9ff29e4833f2e5fa5"
       },
       "comments": [],
       "reviews": []
