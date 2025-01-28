@@ -268,7 +268,6 @@ compatibility.
 |`collector_authentication_token` (only present if `role` is `"leader"`)|The authentication token that is shared between the Leader and Collector, as a string. This string MUST be safe for use as an HTTP header value. When the Collector sends HTTP requests to the Leader, it MUST include this value in a header named `DAP-Auth-Token`.|
 |`role`|Either `"leader"` or `"helper"`.|
 |`vdaf_verify_key`|The VDAF verification key shared by the two Aggregators, encoded with base64url.|
-|`max_batch_query_count`|A number, providing the maximum number of batches any report may be included in, and thus the number of aggregate results it may contribute to.|
 |`batch_mode`|A number, representing the task's batch mode, as described in {{batch-mode}}.|
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval batch mode, the batch interval's duration will always be a multiple of this value.|
@@ -365,8 +364,6 @@ Test cases could be written to cover the following scenarios.
 * Test that uploading a report with a time far in the future is rejected.
 * Confirm that Leaders and Helpers reject requests with respective
   authentication tokens that are incorrect.
-* Test enforcement of `max_batch_query_count` by making overlapping collection
-  requests.
 * Perform an entire aggregation and collection flow, attempt to upload a late
   report that falls into the same batch interval, and test that performing the
   collection request a second time yields the same result.
