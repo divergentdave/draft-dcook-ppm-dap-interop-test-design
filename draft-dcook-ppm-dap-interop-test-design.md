@@ -130,11 +130,11 @@ the test runner. All requests MUST use the HTTP method POST. Requests and
 responses for each endpoint listed below SHALL be encoded JSON objects
 {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task
 IDs, batch IDs, HPKE configurations, and VDAF verification keys) SHALL be
-encoded as strings with base64url {{!RFC4648}}, inside the JSON objects. Any
-integer values in the parameters, measurement, or aggregate result of a {{VDAF}}
-will be encoded as strings in base 10 instead of as numbers. This avoids
-incompatibilities due to limitations on the range of JSON numbers that different
-implementations can process.
+encoded as strings with base64url {{!RFC4648}}, without padding, inside the JSON
+objects. Any integer values in the parameters, measurement, or aggregate result
+of a {{VDAF}} will be encoded as strings in base 10 instead of as numbers. This
+avoids incompatibilities due to limitations on the range of JSON numbers that
+different implementations can process.
 
 Each of these test APIs should return a status code of 200 OK if the command was
 received, recognized, and parsed successfully, regardless of whether any
