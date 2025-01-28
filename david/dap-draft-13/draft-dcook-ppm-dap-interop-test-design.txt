@@ -4,8 +4,8 @@
 
 Privacy Preserving Measurement                                   D. Cook
 Internet-Draft                                                      ISRG
-Intended status: Informational                          25 November 2024
-Expires: 29 May 2025
+Intended status: Informational                           28 January 2025
+Expires: 1 August 2025
 
 
                      DAP Interoperation Test Design
@@ -55,11 +55,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 May 2025.
+   This Internet-Draft will expire on 1 August 2025.
 
 Copyright Notice
 
-   Copyright (c) 2024 IETF Trust and the persons identified as the
+   Copyright (c) 2025 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -79,7 +79,7 @@ Table of Contents
    4.  Interoperation Test API
      4.1.  Common Structures
        4.1.1.  VDAF
-       4.1.2.  Query
+       4.1.2.  Batch Mode
      4.2.  Client
        4.2.1.  /internal/test/ready
        4.2.2.  /internal/test/upload
@@ -201,73 +201,74 @@ Table of Contents
    attributes (new type values and new keys will be added as new VDAFs
    are defined).
 
-    +====================+============================================+
-    | Key                | Value                                      |
-    +====================+============================================+
-    | type               | One of "Prio3Count", "Prio3Histogram",     |
-    |                    | "Prio3Sum", "Prio3SumVec", or "Poplar1"    |
-    +--------------------+--------------------------------------------+
-    | length (only       | The length of the vectors being summed,    |
-    | present if type is | encoded in base 10 as a string.            |
-    | "Prio3Histogram"   |                                            |
-    | or "Prio3SumVec")  |                                            |
-    +--------------------+--------------------------------------------+
-    | chunk_length (only | This parameter is required by the parallel |
-    | present if type is | sum circuit optimization used in these     |
-    | "Prio3Histogram"   | VDAFs.  It is a positive number encoded in |
-    | or "Prio3SumVec")  | base 10 as a string.                       |
-    +--------------------+--------------------------------------------+
-    | bits (only present | In the case of Prio3Sum or Prio3SumVec,    |
-    | if type is         | the bit width of the integers being        |
-    | "Prio3Sum",        | summed, encoded in base 10 as a string.    |
-    | "Prio3SumVec", or  | In the case of Poplar1, the bit length of  |
-    | "Poplar1")         | the input, encoded in base 10 as a string. |
-    +--------------------+--------------------------------------------+
+      +==========================+==================================+
+      | Key                      | Value                            |
+      +==========================+==================================+
+      | type                     | One of "Prio3Count", "Prio3Sum", |
+      |                          | "Prio3SumVec", "Prio3Histogram", |
+      |                          | "Prio3MultihotCountVec", or      |
+      |                          | "Poplar1"                        |
+      +--------------------------+----------------------------------+
+      | max_measurement (only    | The largest valid measurement,   |
+      | present if type is       | encoded in base 10 as a string.  |
+      | "Prio3Sum")              |                                  |
+      +--------------------------+----------------------------------+
+      | length (only present if  | The length of the vectors being  |
+      | type is "Prio3SumVec",   | summed, encoded in base 10 as a  |
+      | "Prio3Histogram", or     | string.                          |
+      | "Prio3MultihotCountVec") |                                  |
+      +--------------------------+----------------------------------+
+      | bits (only present if    | In the case of Prio3SumVec, the  |
+      | type is "Prio3SumVec" or | bit width of the integers being  |
+      | "Poplar1")               | summed, encoded in base 10 as a  |
+      |                          | string.  In the case of Poplar1, |
+      |                          | the bit length of the input,     |
+      |                          | encoded in base 10 as a string.  |
+      +--------------------------+----------------------------------+
+      | max_weight (only present | The maximum number of 1 values   |
+      | if type is               | in the vectors being summed,     |
+      | "Prio3MultihotCountVec"  | encoded in base 10 as a string.  |
+      +--------------------------+----------------------------------+
+      | chunk_length (only       | This parameter is required by    |
+      | present if type is       | the parallel sum circuit         |
+      | "Prio3SumVec",           | optimization used in these       |
+      | "Prio3Histogram", or     | VDAFs.  It is a positive number  |
+      | "Prio3MultihotCountVec") | encoded in base 10 as a string.  |
+      +--------------------------+----------------------------------+
 
                     Table 1: VDAF JSON object structure
 
-4.1.2.  Query
+4.1.2.  Batch Mode
 
    In multiple APIs defined below, the test runner will need to send a
-   query type, and in one API, it will need to send a query type along
-   with the associated query parameters.
+   batch mode.  In one API, it will need to send a query, including both
+   a batch mode and a corresponding query configuration.
 
-   Query types are represented in API requests as numbers, following the
-   values of the QueryType enum in [DAP].
+   Batch modes are represented in API requests as numbers, following the
+   values of the BatchMode enum in [DAP].
 
    Queries are represented in API requests as a nested object, with the
-   following attributes (new keys will be added as new query types are
+   following attributes (new keys will be added as new batch modes are
    defined).
 
-      +============================+===============================+
-      | Key                        | Value                         |
-      +============================+===============================+
-      | type                       | A number, representing a      |
-      |                            | query type, as described      |
-      |                            | above.                        |
-      +----------------------------+-------------------------------+
-      | batch_interval_start (only | The start of the batch        |
-      | present if type is 1, for  | interval, represented as a    |
-      | time interval queries)     | number equal to the number of |
-      |                            | seconds since the UNIX epoch. |
-      +----------------------------+-------------------------------+
-      | batch_interval_duration    | The duration of the batch     |
-      | (only present if type is   | interval in seconds, as a     |
-      | 1, for time interval       | number.                       |
-      | queries)                   |                               |
-      +----------------------------+-------------------------------+
-      | subtype (only present if   | 0 or 1, representing one of   |
-      | type is 2, for fixed size  | the values of the             |
-      | queries)                   | FixedSizeQueryType enum in    |
-      |                            | [DAP].                        |
-      +----------------------------+-------------------------------+
-      | batch_id (only present if  | A base64url-encoded DAP       |
-      | type is 2, for fixed size  | BatchID.                      |
-      | queries, and subtype is 0, |                               |
-      | for "by batch ID" queries) |                               |
-      +----------------------------+-------------------------------+
+    +=================================+===============================+
+    | Key                             | Value                         |
+    +=================================+===============================+
+    | batch_mode                      | A number, representing a      |
+    |                                 | batch mode, as described      |
+    |                                 | above.                        |
+    +---------------------------------+-------------------------------+
+    | batch_interval_start (only      | The start of the batch        |
+    | present if batch_mode is 1, for | interval, represented as a    |
+    | the time interval batch mode)   | number equal to the number of |
+    |                                 | seconds since the UNIX epoch. |
+    +---------------------------------+-------------------------------+
+    | batch_interval_duration (only   | The duration of the batch     |
+    | present if batch_mode is 1, for | interval in seconds, as a     |
+    | the time interval batch mode)   | number.                       |
+    +---------------------------------+-------------------------------+
 
-                   Table 2: Query JSON object structure
+                    Table 2: Query JSON object structure
 
 4.2.  Client
 
@@ -284,42 +285,41 @@ Table of Contents
    it.  The Client container will send its response to the test runner
    once report submission has either succeeded or permanently failed.
 
-      +================+============================================+
-      | Key            | Value                                      |
-      +================+============================================+
-      | task_id        | A base64url-encoded DAP TaskId.            |
-      +----------------+--------------------------------------------+
-      | leader         | The Leader's endpoint URL.                 |
-      +----------------+--------------------------------------------+
-      | helper         | The Helper's endpoint URL.                 |
-      +----------------+--------------------------------------------+
-      | vdaf           | An object, with the layout given in        |
-      |                | Table 1.  This determines the VDAF to be   |
-      |                | used when constructing a report.           |
-      +----------------+--------------------------------------------+
-      | measurement    | If the VDAF's type is "Prio3Count": "0" or |
-      |                | "1".  If the VDAF's type is "Prio3Sum": a  |
-      |                | string (representing an integer in base    |
-      |                | 10).  If the VDAF's type is "Prio3SumVec": |
-      |                | an array of strings, each representing an  |
-      |                | integer in base 10.  If the VDAF's type is |
-      |                | "Prio3Histogram": a string (representing   |
-      |                | an integer in base 10).  If the VDAF's     |
-      |                | type is "Poplar1": an array of Booleans.   |
-      +----------------+--------------------------------------------+
-      | time           | If present, this provides a substitute     |
-      | (optional)     | time value that should be used when        |
-      |                | constructing the report.  If not present,  |
-      |                | the current system time should be used, as |
-      |                | per normal.  The time is represented as a  |
-      |                | number, with a value of the number of      |
-      |                | seconds since the UNIX epoch.              |
-      +----------------+--------------------------------------------+
-      | time_precision | A number, providing the precision in       |
-      |                | seconds of report timestamps.              |
-      +----------------+--------------------------------------------+
+   +================+=================================================+
+   | Key            | Value                                           |
+   +================+=================================================+
+   | task_id        | A base64url-encoded DAP TaskId.                 |
+   +----------------+-------------------------------------------------+
+   | leader         | The Leader's endpoint URL.                      |
+   +----------------+-------------------------------------------------+
+   | helper         | The Helper's endpoint URL.                      |
+   +----------------+-------------------------------------------------+
+   | vdaf           | An object, with the layout given in Table 1.    |
+   |                | This determines the VDAF to be used when        |
+   |                | constructing a report.                          |
+   +----------------+-------------------------------------------------+
+   | measurement    | If the VDAF's type is "Prio3Count": "0" or "1". |
+   |                | If the VDAF's type is "Prio3Sum": a string      |
+   |                | (representing an integer in base 10).  If the   |
+   |                | VDAF's type is "Prio3SumVec" or                 |
+   |                | "Prio3MultihotCountVec": an array of strings,   |
+   |                | each representing an integer in base 10.  If    |
+   |                | the VDAF's type is "Prio3Histogram": a string   |
+   |                | (representing an integer in base 10).  If the   |
+   |                | VDAF's type is "Poplar1": an array of Booleans. |
+   +----------------+-------------------------------------------------+
+   | time           | If present, this provides a substitute time     |
+   | (optional)     | value that should be used when constructing the |
+   |                | report.  If not present, the current system     |
+   |                | time should be used, as per normal.  The time   |
+   |                | is represented as a number, with a value of the |
+   |                | number of seconds since the UNIX epoch.         |
+   +----------------+-------------------------------------------------+
+   | time_precision | A number, providing the precision in seconds of |
+   |                | report timestamps.                              |
+   +----------------+-------------------------------------------------+
 
-                   Table 3: Request JSON object structure
+                  Table 3: Request JSON object structure
 
        +============+==============================================+
        | Key        | Value                                        |
@@ -396,10 +396,6 @@ Table of Contents
    Register a task with the Aggregator, with the given configuration and
    secrets.
 
-   At least one of the HPKE keypairs available for this task should use
-   the mandatory-to-implement algorithms in section 6 of [DAP], for
-   broad compatibility.
-
     +================================+===============================+
     | Key                            | Value                         |
     +================================+===============================+
@@ -445,15 +441,8 @@ Table of Contents
     |                                | Aggregators, encoded with     |
     |                                | base64url.                    |
     +--------------------------------+-------------------------------+
-    | max_batch_query_count          | A number, providing the       |
-    |                                | maximum number of batches any |
-    |                                | report may be included in,    |
-    |                                | and thus the number of        |
-    |                                | aggregate results it may      |
-    |                                | contribute to.                |
-    +--------------------------------+-------------------------------+
-    | query_type                     | A number, representing the    |
-    |                                | task's query type, as         |
+    | batch_mode                     | A number, representing the    |
+    |                                | task's batch mode, as         |
     |                                | described in Section 4.1.2.   |
     +--------------------------------+-------------------------------+
     | min_batch_size                 | A number, providing the       |
@@ -461,17 +450,11 @@ Table of Contents
     |                                | that must be in a batch for   |
     |                                | it to be collected.           |
     +--------------------------------+-------------------------------+
-    | max_batch_size (only present   | A number, providing the       |
-    | if query_type is 2, for fixed  | maximum number of reports     |
-    | size queries)                  | that may be in a batch for it |
-    |                                | to be collected, or null, if  |
-    |                                | there is no maximum.          |
-    +--------------------------------+-------------------------------+
     | time_precision                 | A number, providing the       |
     |                                | precision in seconds of       |
     |                                | report timestamps.  For tasks |
-    |                                | using the time interval query |
-    |                                | type, the batch interval's    |
+    |                                | using the time interval batch |
+    |                                | mode, the batch interval's    |
     |                                | duration will always be a     |
     |                                | multiple of this value.       |
     +--------------------------------+-------------------------------+
@@ -480,12 +463,19 @@ Table of Contents
     |                                | base64url, for encryption of  |
     |                                | aggregate shares.             |
     +--------------------------------+-------------------------------+
-    | task_expiration                | A number, providing the time  |
-    |                                | when Clients are no longer    |
-    |                                | expected to upload to this    |
-    |                                | task.  This is represented as |
-    |                                | a number of seconds since the |
-    |                                | UNIX epoch.                   |
+    | task_start                     | A number, indicating the time |
+    |                                | after which reports will be   |
+    |                                | accepted.  This is            |
+    |                                | represented as a number of    |
+    |                                | seconds since the UNIX epoch. |
+    +--------------------------------+-------------------------------+
+    | task_duration                  | A number, indicating the      |
+    |                                | duration of the task.         |
+    |                                | Reports with timestamps after |
+    |                                | task_start + task_duration    |
+    |                                | will be rejected.  This is    |
+    |                                | represented as a number of    |
+    |                                | seconds.                      |
     +--------------------------------+-------------------------------+
 
                   Table 7: Request JSON object structure
@@ -517,9 +507,6 @@ Table of Contents
    Register a task with the Collector, with the given configuration.
    Returns the Collector's HPKE configuration for this task.
 
-   The HPKE keypair generated for this task should use the mandatory-to-
-   implement algorithms in section 6 of [DAP], for broad compatibility.
-
     +================================+===============================+
     | Key                            | Value                         |
     +================================+===============================+
@@ -542,8 +529,8 @@ Table of Contents
     |                                | MUST include this value in a  |
     |                                | header named DAP-Auth-Token.  |
     +--------------------------------+-------------------------------+
-    | query_type                     | A number, representing the    |
-    |                                | task's query type, as         |
+    | batch_mode                     | A number, representing the    |
+    |                                | task's batch mode, as         |
     |                                | described in Section 4.1.2.   |
     +--------------------------------+-------------------------------+
 
@@ -623,40 +610,40 @@ Table of Contents
 
                   Table 13: Request JSON object structure
 
-    +===================+============================================+
-    | Key               | Value                                      |
-    +===================+============================================+
-    | status            | Either "complete" if the result is ready,  |
-    |                   | "in progress" if the result is not yet     |
-    |                   | ready, or "error" if an error occurred.    |
-    +-------------------+--------------------------------------------+
-    | error (optional)  | An optional error message, to assist in    |
-    |                   | troubleshooting.  This will be included in |
-    |                   | the test runner logs.                      |
-    +-------------------+--------------------------------------------+
-    | batch_id (if the  | The identifier of the batch that was       |
-    | task uses fixed   | collected, encoded with base64url.         |
-    | size queries)     |                                            |
-    +-------------------+--------------------------------------------+
-    | report_count (if  | A number, reflecting the count of Client   |
-    | complete)         | reports included in this aggregated        |
-    |                   | result.                                    |
-    +-------------------+--------------------------------------------+
-    | interval_start    | The start of the collection's interval,    |
-    | (if complete)     | represented as a number equal to the       |
-    |                   | number of seconds since the UNIX epoch.    |
-    +-------------------+--------------------------------------------+
-    | interval_duration | The duration of the collection's interval  |
-    | (if complete)     | in seconds, as a number.                   |
-    +-------------------+--------------------------------------------+
-    | result (if        | The result of the aggregation.  If the     |
-    | complete)         | VDAF is of type Prio3Count or Prio3Sum,    |
-    |                   | this will be a string, representing an     |
-    |                   | integer in base 10.  If the VDAF is of     |
-    |                   | type Prio3Histogram, Prio3SumVec, or       |
-    |                   | Poplar1, this will be an array of strings, |
-    |                   | each representing an integer in base 10.   |
-    +-------------------+--------------------------------------------+
+   +===================+==============================================+
+   | Key               | Value                                        |
+   +===================+==============================================+
+   | status            | Either "complete" if the result is ready,    |
+   |                   | "in progress" if the result is not yet       |
+   |                   | ready, or "error" if an error occurred.      |
+   +-------------------+----------------------------------------------+
+   | error (optional)  | An optional error message, to assist in      |
+   |                   | troubleshooting.  This will be included in   |
+   |                   | the test runner logs.                        |
+   +-------------------+----------------------------------------------+
+   | batch_id (if the  | The identifier of the batch that was         |
+   | task uses the     | collected, encoded with base64url.           |
+   | leader-selected   |                                              |
+   | batch mode)       |                                              |
+   +-------------------+----------------------------------------------+
+   | report_count (if  | A number, reflecting the count of Client     |
+   | complete)         | reports included in this aggregated result.  |
+   +-------------------+----------------------------------------------+
+   | interval_start    | The start of the collection's interval,      |
+   | (if complete)     | represented as a number equal to the number  |
+   |                   | of seconds since the UNIX epoch.             |
+   +-------------------+----------------------------------------------+
+   | interval_duration | The duration of the collection's interval in |
+   | (if complete)     | seconds, as a number.                        |
+   +-------------------+----------------------------------------------+
+   | result (if        | The result of the aggregation.  If the VDAF  |
+   | complete)         | is of type Prio3Count or Prio3Sum, this will |
+   |                   | be a string, representing an integer in base |
+   |                   | 10.  If the VDAF is of type Prio3SumVec,     |
+   |                   | Prio3Histogram, Prio3MultihotCountVec, or    |
+   |                   | Poplar1, this will be an array of strings,   |
+   |                   | each representing an integer in base 10.     |
+   +-------------------+----------------------------------------------+
 
                  Table 14: Response JSON object structure
 
@@ -676,9 +663,6 @@ Table of Contents
    *  Confirm that Leaders and Helpers reject requests with respective
       authentication tokens that are incorrect.
 
-   *  Test enforcement of max_batch_query_count by making overlapping
-      collection requests.
-
    *  Perform an entire aggregation and collection flow, attempt to
       upload a late report that falls into the same batch interval, and
       test that performing the collection request a second time yields
@@ -689,6 +673,11 @@ Table of Contents
       inspecting the aggregation result.
 
 4.6.  Other Test Considerations
+
+   Aggregators SHOULD advertise at least one HPKE configuration that
+   uses the mandatory-to-implement algorithms in Section 7 of [DAP], for
+   broad compatibility.  Similarly, Collectors SHOULD use the mandatory-
+   to-implement algorithms in their HPKE configurations.
 
    All test cases should automatically fail after a generous timeout.
 
@@ -729,8 +718,7 @@ Table of Contents
    7.   Construct Aggregator URLs using the above responses.
 
    8.   Send a /internal/test/add_task request (Section 4.4.2) to the
-        Collector. (the Collector generates an HPKE key pair as a side-
-        effect)
+        Collector.
 
    9.   Send a /internal/test/add_task request (Section 4.3.3) to the
         Leader.
@@ -780,9 +768,9 @@ Table of Contents
    [DAP]      Geoghegan, T., Patton, C., Pitman, B., Rescorla, E., and
               C. A. Wood, "Distributed Aggregation Protocol for Privacy
               Preserving Measurement", Work in Progress, Internet-Draft,
-              draft-ietf-ppm-dap-09, 18 December 2023,
+              draft-ietf-ppm-dap-13, 2 November 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-ppm-dap-
-              09>.
+              13>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -803,9 +791,9 @@ Table of Contents
 
    [VDAF]     Barnes, R., Cook, D., Patton, C., and P. Schoppmann,
               "Verifiable Distributed Aggregation Functions", Work in
-              Progress, Internet-Draft, draft-irtf-cfrg-vdaf-08, 20
-              November 2023, <https://datatracker.ietf.org/doc/html/
-              draft-irtf-cfrg-vdaf-08>.
+              Progress, Internet-Draft, draft-irtf-cfrg-vdaf-13, 2
+              November 2024, <https://datatracker.ietf.org/doc/html/
+              draft-irtf-cfrg-vdaf-13>.
 
 8.2.  Informative References
 
