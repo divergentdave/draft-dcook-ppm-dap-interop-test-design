@@ -163,24 +163,22 @@ new keys will be added as new VDAFs are defined).
 {: title="VDAF JSON object structure" #vdaf-object}
 
 
-### Query {#query}
+### Batch Mode {#batch-mode}
 
-In multiple APIs defined below, the test runner will need to send a query type,
-and in one API, it will need to send a query type along with the associated
-query parameters.
+In multiple APIs defined below, the test runner will need to send a batch mode.
+In one API, it will need to send a query, including both a batch mode and a
+corresponding query configuration.
 
-Query types are represented in API requests as numbers, following the values of
-the `QueryType` enum in [DAP].
+Batch modes are represented in API requests as numbers, following the values of
+the `BatchMode` enum in [DAP].
 
 Queries are represented in API requests as a nested object, with the following
-attributes (new keys will be added as new query types are defined).
+attributes (new keys will be added as new batch modes are defined).
 
 |Key|Value|
-|`type`|A number, representing a query type, as described above.|
-|`batch_interval_start` (only present if `type` is 1, for time interval queries)|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
-|`batch_interval_duration` (only present if `type` is 1, for time interval queries)|The duration of the batch interval in seconds, as a number.|
-|`subtype` (only present if `type` is 2, for fixed size queries)|0 or 1, representing one of the values of the `FixedSizeQueryType` enum in [DAP].|
-|`batch_id` (only present if `type` is 2, for fixed size queries, and `subtype` is 0, for "by batch ID" queries)|A base64url-encoded DAP `BatchID`.|
+|`batch_mode`|A number, representing a batch mode, as described above.|
+|`batch_interval_start` (only present if `batch_mode` is 1, for the time interval batch mode)|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
+|`batch_interval_duration` (only present if `batch_mode` is 1, for the time interval batch mode)|The duration of the batch interval in seconds, as a number.|
 {: title="Query JSON object structure" #query-object}
 
 
@@ -271,10 +269,9 @@ compatibility.
 |`role`|Either `"leader"` or `"helper"`.|
 |`vdaf_verify_key`|The VDAF verification key shared by the two Aggregators, encoded with base64url.|
 |`max_batch_query_count`|A number, providing the maximum number of batches any report may be included in, and thus the number of aggregate results it may contribute to.|
-|`query_type`|A number, representing the task's query type, as described in {{query}}.|
+|`batch_mode`|A number, representing the task's batch mode, as described in {{batch-mode}}.|
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
-|`max_batch_size` (only present if `query_type` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected, or null, if there is no maximum.|
-|`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
+|`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval batch mode, the batch interval's duration will always be a multiple of this value.|
 |`collector_hpke_config`|The Collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
 |`task_expiration`|A number, providing the time when Clients are no longer expected to upload to this task. This is represented as a number of seconds since the UNIX epoch.|
 {: title="Request JSON object structure"}
@@ -307,7 +304,7 @@ algorithms in section 6 of [DAP], for broad compatibility.
 |`leader`|The Leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
 |`collector_authentication_token`|The authentication token that is shared between the Leader and Collector, as a string. This string MUST be safe for use as an HTTP header value. When the Collector sends HTTP requests to the Leader, it MUST include this value in a header named `DAP-Auth-Token`.|
-|`query_type`|A number, representing the task's query type, as described in {{query}}.|
+|`batch_mode`|A number, representing the task's batch mode, as described in {{batch-mode}}.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -350,7 +347,7 @@ status and (if available) results to the test runner.
 |Key|Value|
 |`status`|Either `"complete"` if the result is ready, `"in progress"` if the result is not yet ready, or `"error"` if an error occurred.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`batch_id` (if the task uses fixed size queries)|The identifier of the batch that was collected, encoded with base64url.|
+|`batch_id` (if the task uses the leader-selected batch mode)|The identifier of the batch that was collected, encoded with base64url.|
 |`report_count` (if complete)|A number, reflecting the count of Client reports included in this aggregated result.|
 |`interval_start` (if complete)|The start of the collection's interval, represented as a number equal to the number of seconds since the UNIX epoch.|
 |`interval_duration` (if complete)|The duration of the collection's interval in seconds, as a number.|
