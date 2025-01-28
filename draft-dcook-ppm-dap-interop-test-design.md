@@ -25,8 +25,8 @@ author:
     email: "dcook@divviup.org"
 
 normative:
-  DAP: I-D.draft-ietf-ppm-dap-09
-  VDAF: I-D.draft-irtf-cfrg-vdaf-08
+  DAP: I-D.draft-ietf-ppm-dap-13
+  VDAF: I-D.draft-irtf-cfrg-vdaf-13
 
 informative:
   SI2020:
