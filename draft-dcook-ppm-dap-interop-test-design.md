@@ -268,7 +268,8 @@ Register a task with the Aggregator, with the given configuration and secrets.
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval batch mode, the batch interval's duration will always be a multiple of this value.|
 |`collector_hpke_config`|The Collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
-|`task_expiration`|A number, providing the time when Clients are no longer expected to upload to this task. This is represented as a number of seconds since the UNIX epoch.|
+|`task_start`|A number, indicating the time after which reports will be accepted. This is represented as a number of seconds since the UNIX epoch.|
+|`task_duration`|A number, indicating the duration of the task. Reports with timestamps after `task_start + task_duration` will be rejected. This is represented as a number of seconds.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
