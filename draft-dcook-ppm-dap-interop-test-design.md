@@ -255,10 +255,6 @@ URL and return that.
 
 Register a task with the Aggregator, with the given configuration and secrets.
 
-At least one of the HPKE keypairs available for this task should use the
-mandatory-to-implement algorithms in section 6 of [DAP], for broad
-compatibility.
-
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
 |`leader`|The Leader's endpoint URL. The test runner will ensure this is an absolute URL.|
@@ -294,9 +290,6 @@ return a status code of 200 OK.
 
 Register a task with the Collector, with the given configuration. Returns the
 Collector's HPKE configuration for this task.
-
-The HPKE keypair generated for this task should use the mandatory-to-implement
-algorithms in section 6 of [DAP], for broad compatibility.
 
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
@@ -374,6 +367,11 @@ Test cases could be written to cover the following scenarios.
 
 ## Other Test Considerations
 
+Aggregators SHOULD advertise at least one HPKE configuration that uses the
+mandatory-to-implement algorithms in {{Section 7 of DAP}}, for broad
+compatibility. Similarly, Collectors SHOULD use the mandatory-to-implement
+algorithms in their HPKE configurations.
+
 All test cases should automatically fail after a generous timeout.
 
 It is the responsibility of the test runner to wait for all containers to start
@@ -406,7 +404,7 @@ successful aggregation.
    the Helper.
 1. Construct Aggregator URLs using the above responses.
 1. Send a `/internal/test/add_task` request ({{collector-add-task}}) to the
-   Collector. (the Collector generates an HPKE key pair as a side-effect)
+   Collector.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
    Leader.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
