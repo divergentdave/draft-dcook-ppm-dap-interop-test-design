@@ -25,8 +25,8 @@ author:
     email: "dcook@divviup.org"
 
 normative:
-  DAP: I-D.draft-ietf-ppm-dap-09
-  VDAF: I-D.draft-irtf-cfrg-vdaf-08
+  DAP: I-D.draft-ietf-ppm-dap-13
+  VDAF: I-D.draft-irtf-cfrg-vdaf-13
 
 informative:
   SI2020:
@@ -130,11 +130,11 @@ the test runner. All requests MUST use the HTTP method POST. Requests and
 responses for each endpoint listed below SHALL be encoded JSON objects
 {{!RFC8729}}, with media type `application/json`. All binary blobs (i.e. task
 IDs, batch IDs, HPKE configurations, and VDAF verification keys) SHALL be
-encoded as strings with base64url {{!RFC4648}}, inside the JSON objects. Any
-integer values in the parameters, measurement, or aggregate result of a {{VDAF}}
-will be encoded as strings in base 10 instead of as numbers. This avoids
-incompatibilities due to limitations on the range of JSON numbers that different
-implementations can process.
+encoded as strings with base64url {{!RFC4648}}, without padding, inside the JSON
+objects. Any integer values in the parameters, measurement, or aggregate result
+of a {{VDAF}} will be encoded as strings in base 10 instead of as numbers. This
+avoids incompatibilities due to limitations on the range of JSON numbers that
+different implementations can process.
 
 Each of these test APIs should return a status code of 200 OK if the command was
 received, recognized, and parsed successfully, regardless of whether any
@@ -154,31 +154,31 @@ stored in a nested object, with the following attributes (new `type` values and
 new keys will be added as new VDAFs are defined).
 
 |Key|Value|
-|`type`|One of `"Prio3Count"`, `"Prio3Histogram"`, `"Prio3Sum"`, `"Prio3SumVec"`, or `"Poplar1"`|
-|`length` (only present if `type` is `"Prio3Histogram"` or `"Prio3SumVec"`)|The length of the vectors being summed, encoded in base 10 as a string.|
-|`chunk_length` (only present if `type` is `"Prio3Histogram"` or `"Prio3SumVec"`)|This parameter is required by the parallel sum circuit optimization used in these VDAFs. It is a positive number encoded in base 10 as a string.|
-|`bits` (only present if `type` is `"Prio3Sum"`, `"Prio3SumVec"`, or `"Poplar1"`)|In the case of Prio3Sum or Prio3SumVec, the bit width of the integers being summed, encoded in base 10 as a string. In the case of Poplar1, the bit length of the input, encoded in base 10 as a string.|
+|`type`|One of `"Prio3Count"`, `"Prio3Sum"`, `"Prio3SumVec"`, `"Prio3Histogram"`, `"Prio3MultihotCountVec"`, or `"Poplar1"`|
+|`max_measurement` (only present if `type` is `"Prio3Sum"`)|The largest valid measurement, encoded in base 10 as a string.|
+|`length` (only present if `type` is `"Prio3SumVec"`, `"Prio3Histogram"`, or `"Prio3MultihotCountVec"`)|The length of the vectors being summed, encoded in base 10 as a string.|
+|`bits` (only present if `type` is `"Prio3SumVec"` or `"Poplar1"`)|In the case of Prio3SumVec, the bit width of the integers being summed, encoded in base 10 as a string. In the case of Poplar1, the bit length of the input, encoded in base 10 as a string.|
+|`max_weight` (only present if `type` is `"Prio3MultihotCountVec"`|The maximum number of 1 values in the vectors being summed, encoded in base 10 as a string.|
+|`chunk_length` (only present if `type` is `"Prio3SumVec"`, `"Prio3Histogram"`, or `"Prio3MultihotCountVec"`)|This parameter is required by the parallel sum circuit optimization used in these VDAFs. It is a positive number encoded in base 10 as a string.|
 {: title="VDAF JSON object structure" #vdaf-object}
 
 
-### Query {#query}
+### Batch Mode {#batch-mode}
 
-In multiple APIs defined below, the test runner will need to send a query type,
-and in one API, it will need to send a query type along with the associated
-query parameters.
+In multiple APIs defined below, the test runner will need to send a batch mode.
+In one API, it will need to send a query, including both a batch mode and a
+corresponding query configuration.
 
-Query types are represented in API requests as numbers, following the values of
-the `QueryType` enum in [DAP].
+Batch modes are represented in API requests as numbers, following the values of
+the `BatchMode` enum in [DAP].
 
 Queries are represented in API requests as a nested object, with the following
-attributes (new keys will be added as new query types are defined).
+attributes (new keys will be added as new batch modes are defined).
 
 |Key|Value|
-|`type`|A number, representing a query type, as described above.|
-|`batch_interval_start` (only present if `type` is 1, for time interval queries)|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
-|`batch_interval_duration` (only present if `type` is 1, for time interval queries)|The duration of the batch interval in seconds, as a number.|
-|`subtype` (only present if `type` is 2, for fixed size queries)|0 or 1, representing one of the values of the `FixedSizeQueryType` enum in [DAP].|
-|`batch_id` (only present if `type` is 2, for fixed size queries, and `subtype` is 0, for "by batch ID" queries)|A base64url-encoded DAP `BatchID`.|
+|`batch_mode`|A number, representing a batch mode, as described above.|
+|`batch_interval_start` (only present if `batch_mode` is 1, for the time interval batch mode)|The start of the batch interval, represented as a number equal to the number of seconds since the UNIX epoch.|
+|`batch_interval_duration` (only present if `batch_mode` is 1, for the time interval batch mode)|The duration of the batch interval in seconds, as a number.|
 {: title="Query JSON object structure" #query-object}
 
 
@@ -203,7 +203,7 @@ either succeeded or permanently failed.
 |`leader`|The Leader's endpoint URL.|
 |`helper`|The Helper's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the VDAF to be used when constructing a report.|
-|`measurement`|If the VDAF's `type` is `"Prio3Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3SumVec"`: an array of strings, each representing an integer in base 10. If the VDAF's `type` is `"Prio3Histogram"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Poplar1"`: an array of Booleans.|
+|`measurement`|If the VDAF's `type` is `"Prio3Count"`: `"0"` or `"1"`. If the VDAF's `type` is `"Prio3Sum"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Prio3SumVec"` or `"Prio3MultihotCountVec"`: an array of strings, each representing an integer in base 10. If the VDAF's `type` is `"Prio3Histogram"`: a string (representing an integer in base 10). If the VDAF's `type` is `"Poplar1"`: an array of Booleans.|
 |`time` (optional)|If present, this provides a substitute time value that should be used when constructing the report. If not present, the current system time should be used, as per normal. The time is represented as a number, with a value of the number of seconds since the UNIX epoch.|
 |`time_precision`|A number, providing the precision in seconds of report timestamps.|
 {: title="Request JSON object structure"}
@@ -255,10 +255,6 @@ URL and return that.
 
 Register a task with the Aggregator, with the given configuration and secrets.
 
-At least one of the HPKE keypairs available for this task should use the
-mandatory-to-implement algorithms in section 6 of [DAP], for broad
-compatibility.
-
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
 |`leader`|The Leader's endpoint URL. The test runner will ensure this is an absolute URL.|
@@ -268,13 +264,12 @@ compatibility.
 |`collector_authentication_token` (only present if `role` is `"leader"`)|The authentication token that is shared between the Leader and Collector, as a string. This string MUST be safe for use as an HTTP header value. When the Collector sends HTTP requests to the Leader, it MUST include this value in a header named `DAP-Auth-Token`.|
 |`role`|Either `"leader"` or `"helper"`.|
 |`vdaf_verify_key`|The VDAF verification key shared by the two Aggregators, encoded with base64url.|
-|`max_batch_query_count`|A number, providing the maximum number of batches any report may be included in, and thus the number of aggregate results it may contribute to.|
-|`query_type`|A number, representing the task's query type, as described in {{query}}.|
+|`batch_mode`|A number, representing the task's batch mode, as described in {{batch-mode}}.|
 |`min_batch_size`|A number, providing the minimum number of reports that must be in a batch for it to be collected.|
-|`max_batch_size` (only present if `query_type` is 2, for fixed size queries)|A number, providing the maximum number of reports that may be in a batch for it to be collected, or null, if there is no maximum.|
-|`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval query type, the batch interval's duration will always be a multiple of this value.|
+|`time_precision`|A number, providing the precision in seconds of report timestamps. For tasks using the time interval batch mode, the batch interval's duration will always be a multiple of this value.|
 |`collector_hpke_config`|The Collector's HPKE configuration, encoded in base64url, for encryption of aggregate shares.|
-|`task_expiration`|A number, providing the time when Clients are no longer expected to upload to this task. This is represented as a number of seconds since the UNIX epoch.|
+|`task_start`|A number, indicating the time after which reports will be accepted. This is represented as a number of seconds since the UNIX epoch.|
+|`task_duration`|A number, indicating the duration of the task. Reports with timestamps after `task_start + task_duration` will be rejected. This is represented as a number of seconds.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -297,15 +292,12 @@ return a status code of 200 OK.
 Register a task with the Collector, with the given configuration. Returns the
 Collector's HPKE configuration for this task.
 
-The HPKE keypair generated for this task should use the mandatory-to-implement
-algorithms in section 6 of [DAP], for broad compatibility.
-
 |Key|Value|
 |`task_id`|A base64url-encoded DAP `TaskId`.|
 |`leader`|The Leader's endpoint URL.|
 |`vdaf`|An object, with the layout given in {{vdaf-object}}. This determines the task's VDAF.|
 |`collector_authentication_token`|The authentication token that is shared between the Leader and Collector, as a string. This string MUST be safe for use as an HTTP header value. When the Collector sends HTTP requests to the Leader, it MUST include this value in a header named `DAP-Auth-Token`.|
-|`query_type`|A number, representing the task's query type, as described in {{query}}.|
+|`batch_mode`|A number, representing the task's batch mode, as described in {{batch-mode}}.|
 {: title="Request JSON object structure"}
 
 |Key|Value|
@@ -348,11 +340,11 @@ status and (if available) results to the test runner.
 |Key|Value|
 |`status`|Either `"complete"` if the result is ready, `"in progress"` if the result is not yet ready, or `"error"` if an error occurred.|
 |`error` (optional)|An optional error message, to assist in troubleshooting. This will be included in the test runner logs.|
-|`batch_id` (if the task uses fixed size queries)|The identifier of the batch that was collected, encoded with base64url.|
+|`batch_id` (if the task uses the leader-selected batch mode)|The identifier of the batch that was collected, encoded with base64url.|
 |`report_count` (if complete)|A number, reflecting the count of Client reports included in this aggregated result.|
 |`interval_start` (if complete)|The start of the collection's interval, represented as a number equal to the number of seconds since the UNIX epoch.|
 |`interval_duration` (if complete)|The duration of the collection's interval in seconds, as a number.|
-|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Count or Prio3Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3Histogram, Prio3SumVec, or Poplar1, this will be an array of strings, each representing an integer in base 10.|
+|`result` (if complete)|The result of the aggregation. If the VDAF is of type Prio3Count or Prio3Sum, this will be a string, representing an integer in base 10. If the VDAF is of type Prio3SumVec, Prio3Histogram, Prio3MultihotCountVec, or Poplar1, this will be an array of strings, each representing an integer in base 10.|
 {: title="Response JSON object structure"}
 
 
@@ -366,8 +358,6 @@ Test cases could be written to cover the following scenarios.
 * Test that uploading a report with a time far in the future is rejected.
 * Confirm that Leaders and Helpers reject requests with respective
   authentication tokens that are incorrect.
-* Test enforcement of `max_batch_query_count` by making overlapping collection
-  requests.
 * Perform an entire aggregation and collection flow, attempt to upload a late
   report that falls into the same batch interval, and test that performing the
   collection request a second time yields the same result.
@@ -377,6 +367,11 @@ Test cases could be written to cover the following scenarios.
 
 
 ## Other Test Considerations
+
+Aggregators SHOULD advertise at least one HPKE configuration that uses the
+mandatory-to-implement algorithms in {{Section 7 of DAP}}, for broad
+compatibility. Similarly, Collectors SHOULD use the mandatory-to-implement
+algorithms in their HPKE configurations.
 
 All test cases should automatically fail after a generous timeout.
 
@@ -410,7 +405,7 @@ successful aggregation.
    the Helper.
 1. Construct Aggregator URLs using the above responses.
 1. Send a `/internal/test/add_task` request ({{collector-add-task}}) to the
-   Collector. (the Collector generates an HPKE key pair as a side-effect)
+   Collector.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
    Leader.
 1. Send a `/internal/test/add_task` request ({{aggregator-add-task}}) to the
