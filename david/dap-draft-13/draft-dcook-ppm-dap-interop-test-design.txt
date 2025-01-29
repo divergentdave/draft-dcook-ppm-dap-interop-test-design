@@ -4,8 +4,8 @@
 
 Privacy Preserving Measurement                                   D. Cook
 Internet-Draft                                                      ISRG
-Intended status: Informational                           28 January 2025
-Expires: 1 August 2025
+Intended status: Informational                           29 January 2025
+Expires: 2 August 2025
 
 
                      DAP Interoperation Test Design
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 August 2025.
+   This Internet-Draft will expire on 2 August 2025.
 
 Copyright Notice
 
@@ -177,11 +177,11 @@ Table of Contents
    encoded JSON objects [RFC8729], with media type application/json.
    All binary blobs (i.e. task IDs, batch IDs, HPKE configurations, and
    VDAF verification keys) SHALL be encoded as strings with base64url
-   [RFC4648], inside the JSON objects.  Any integer values in the
-   parameters, measurement, or aggregate result of a [VDAF] will be
-   encoded as strings in base 10 instead of as numbers.  This avoids
-   incompatibilities due to limitations on the range of JSON numbers
-   that different implementations can process.
+   [RFC4648], without padding, inside the JSON objects.  Any integer
+   values in the parameters, measurement, or aggregate result of a
+   [VDAF] will be encoded as strings in base 10 instead of as numbers.
+   This avoids incompatibilities due to limitations on the range of JSON
+   numbers that different implementations can process.
 
    Each of these test APIs should return a status code of 200 OK if the
    command was received, recognized, and parsed successfully, regardless
