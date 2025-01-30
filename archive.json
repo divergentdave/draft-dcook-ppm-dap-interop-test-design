@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-28T01:42:29.535738+00:00",
+  "timestamp": "2025-01-30T01:41:19.266947+00:00",
   "repo": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
   "labels": [
     {
@@ -119,15 +119,15 @@
       "id": "I_kwDOHnogs85Tw8WY",
       "title": "Review: Chris P.: s.2: Containers",
       "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/issues/14",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "cjpatton",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "I'm wondering if/how describing test endpoints in terms of \"containers\" is useful. Was this an intentional choice?\r\n\r\nI ask because this strikes me more as an implementation detail than a hard requirement. Rather than prescribe a particular implementation strategy, It seems to me like the main goal of this draft to define the endpoints required for opting into what is, in essence a protocol.\r\n\r\nAs a practical matter, Daphne may end up being deployed on a live endpoint, for the purposes of implementing this draft; but it will not run in a traditional \"container\".",
       "createdAt": "2022-10-11T23:15:14Z",
-      "updatedAt": "2022-10-14T00:26:29Z",
-      "closedAt": null,
+      "updatedAt": "2025-01-28T02:47:19Z",
+      "closedAt": "2025-01-28T02:47:19Z",
       "comments": [
         {
           "author": "divergentdave",
@@ -1798,6 +1798,32 @@
       "mergeCommit": {
         "oid": "88687869ad056a89356767e9ff29e4833f2e5fa5"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 47,
+      "id": "PR_kwDOHnogs86JRf1u",
+      "title": "Updates for DAP draft-13",
+      "url": "https://github.com/divergentdave/draft-dcook-ppm-dap-interop-test-design/pull/47",
+      "state": "OPEN",
+      "author": "divergentdave",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This updates the test API for the latest DAP draft.",
+      "createdAt": "2025-01-28T19:28:24Z",
+      "updatedAt": "2025-01-29T15:27:08Z",
+      "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "baseRefName": "main",
+      "baseRefOid": "88687869ad056a89356767e9ff29e4833f2e5fa5",
+      "headRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
+      "headRefName": "david/dap-draft-13",
+      "headRefOid": "2c77cd2e99eaf03918961b911e335ad36e7ce4e4",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
