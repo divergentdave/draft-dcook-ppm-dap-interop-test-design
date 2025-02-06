@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-04T01:43:16.132267+00:00",
+  "timestamp": "2025-02-06T01:44:51.771803+00:00",
   "repo": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
   "labels": [
     {
@@ -1813,7 +1813,7 @@
       "labels": [],
       "body": "This updates the test API for the latest DAP draft.",
       "createdAt": "2025-01-28T19:28:24Z",
-      "updatedAt": "2025-02-03T22:49:17Z",
+      "updatedAt": "2025-02-05T18:43:48Z",
       "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
       "baseRefName": "main",
       "baseRefOid": "88687869ad056a89356767e9ff29e4833f2e5fa5",
@@ -1845,6 +1845,13 @@
           "body": "In general, I'd prefer an extension mechanism to expecting implementations to produce different container images on a per-configuration basis. (If only because, once we have more than a couple of different configuration knobs, combinatorial explosion of container images will set in quickly.)\r\n\r\nI'm less sure of how to tackle mapping configuration values to aggregator behavior. If we do this, I think we'd need something that's more informative than required (e.g. \"please use {sync,async} as much as possible\" rather than a strict requirement to always use one method or the other) and/or allowing aggregators to reject tasks with unsupported aggregation modes. Still, I think that would be better than expecting the test runner to modify other parameters like VDAF sizes in order to attempt to trigger changes in implementation heuristics.",
           "createdAt": "2025-02-03T22:49:17Z",
           "updatedAt": "2025-02-03T22:49:17Z"
+        },
+        {
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "body": "Daphne will implement async aggregation for DAP-14 and sync for DAP-09: sync for DAP-14 will not be supported. If the test runner requests sync aggregation, we'll have to handle this as an error.\r\n\r\nFWIW I think it's perfectly fine for the test runner to request this and for an implementation to handle it as an error.",
+          "createdAt": "2025-02-05T18:43:47Z",
+          "updatedAt": "2025-02-05T18:43:47Z"
         }
       ],
       "reviews": []
