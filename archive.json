@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-06T01:44:51.771803+00:00",
+  "timestamp": "2025-02-09T01:48:39.506318+00:00",
   "repo": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
   "labels": [
     {
@@ -1813,7 +1813,7 @@
       "labels": [],
       "body": "This updates the test API for the latest DAP draft.",
       "createdAt": "2025-01-28T19:28:24Z",
-      "updatedAt": "2025-02-05T18:43:48Z",
+      "updatedAt": "2025-02-06T19:44:55Z",
       "baseRepository": "divergentdave/draft-dcook-ppm-dap-interop-test-design",
       "baseRefName": "main",
       "baseRefOid": "88687869ad056a89356767e9ff29e4833f2e5fa5",
@@ -1852,6 +1852,13 @@
           "body": "Daphne will implement async aggregation for DAP-14 and sync for DAP-09: sync for DAP-14 will not be supported. If the test runner requests sync aggregation, we'll have to handle this as an error.\r\n\r\nFWIW I think it's perfectly fine for the test runner to request this and for an implementation to handle it as an error.",
           "createdAt": "2025-02-05T18:43:47Z",
           "updatedAt": "2025-02-05T18:43:47Z"
+        },
+        {
+          "author": "branlwyd",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "If there is effectively no flexibility here among the folks that implement the test API, maybe it makes sense to do nothing & not allow the sync/async aggregation mode to be specified in the test API.",
+          "createdAt": "2025-02-06T19:44:53Z",
+          "updatedAt": "2025-02-06T19:44:53Z"
         }
       ],
       "reviews": []
